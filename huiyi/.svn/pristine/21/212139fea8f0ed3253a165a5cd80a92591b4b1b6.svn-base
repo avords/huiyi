@@ -1,0 +1,859 @@
+package com.mvc.member.web;
+
+import java.io.IOException;
+import java.math.BigInteger;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
+
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.mvc.HYConstants;
+import com.mvc.base.model.Country;
+import com.mvc.base.model.Message;
+import com.mvc.base.service.CountryManager;
+import com.mvc.base.service.MessageManager;
+import com.mvc.business.model.Inquiry;
+import com.mvc.business.model.Quotation;
+import com.mvc.business.service.InquiryItemManager;
+import com.mvc.business.service.InquiryManager;
+import com.mvc.business.service.QuotationManager;
+import com.mvc.framework.dao.PropertyFilter;
+import com.mvc.framework.util.LocaleUtils;
+import com.mvc.framework.util.PageSearch;
+import com.mvc.framework.util.PageUtils;
+import com.mvc.member.model.BusinessType;
+import com.mvc.member.model.Company;
+import com.mvc.member.model.CompanyCertificate;
+import com.mvc.member.model.CompanyCertificateFile;
+import com.mvc.member.model.CompanyMedia;
+import com.mvc.member.model.Exhibition;
+import com.mvc.member.model.History;
+import com.mvc.member.model.Member;
+import com.mvc.member.model.PaymentTerm;
+import com.mvc.member.service.BusinessTypeManager;
+import com.mvc.member.service.CompanyCertificateFileManager;
+import com.mvc.member.service.CompanyCertificateManager;
+import com.mvc.member.service.CompanyManager;
+import com.mvc.member.service.CompanyMediaManager;
+import com.mvc.member.service.ExhibitionManager;
+import com.mvc.member.service.HistoryManager;
+import com.mvc.member.service.MemberManager;
+import com.mvc.member.service.PaymentTermManager;
+import com.mvc.product.model.Product;
+import com.mvc.product.service.CategoryManager;
+import com.mvc.product.service.ProductManager;
+import com.mvc.search.util.I18NUtils;
+import com.mvc.security.util.SecurityUtils;
+import com.mvc.service.model.ServiceApply;
+import com.mvc.service.service.ServiceApplyManager;
+import com.mvc.service.service.ServiceManager;
+
+@Controller
+@RequestMapping("/member")
+public class MemberController {
+	private static final String BASE_DIR = "member/";
+	@Autowired
+	private ProductManager productManager;
+	@Autowired
+	private MemberManager memberManager;
+	@Autowired
+	private HistoryManager historyManager;
+	@Autowired
+	private CountryManager countryManager;
+	@Autowired
+	private ExhibitionManager exhibitionManager;
+	@Autowired
+	private BusinessTypeManager businessTypeManager;
+	@Autowired
+	private CompanyMediaManager companyMediaManager;
+	@Autowired
+	private CompanyManager companyManager;
+	@Autowired
+	private CompanyCertificateManager companyCertificateManager;
+	@Autowired
+	private QuotationManager quotationManager;
+	@Autowired
+	private MessageManager messageManager;
+	@Autowired
+	private InquiryManager inquiryManager;
+	@Autowired
+	InquiryItemManager inquiryItemManager;
+	@Autowired
+	private PaymentTermManager paymentTermManager;
+	@Autowired
+	private CategoryManager categoryManager;
+	@Autowired
+	private CompanyCertificateFileManager companyCertificateFileManager;
+	@Autowired
+	private ServiceApplyManager serviceApplyManager;
+	@Autowired
+	private ServiceManager serviceManager;
+
+	// 卖家中心
+	@RequestMapping(value = "/sellerCenter")
+	public String sellerCenter(HttpServletRequest request, HttpServletResponse response) {
+		Long memberId = (Long) request.getSession().getAttribute(HYConstants.MEMBER_ID);
+		Member member = memberManager.getByObjectId(memberId);
+		request.setAttribute("member", member);
+		if (member.getCompanyId()!=null) {
+			request.setAttribute("company", companyManager.getByObjectId(member.getCompanyId()));
+			List<Inquiry> inquiries =inquiryManager.getInquiries(member.getCompanyId(), 0, 5);
+			List<Message> messages =messageManager.getMessages(5, member.getCompanyId());
+			List<ServiceApply> serviceApplies= serviceApplyManager.getServiceApplies(5, memberId);
+			if (serviceApplies.size() > 0) {
+				for (ServiceApply sa : serviceApplies) {
+					com.mvc.service.model.Service service=serviceManager.getByObjectId(sa.getServiceId());
+					com.mvc.util.I18NUtils.transform(service, request);
+					sa.setService(service);
+				}
+			}
+			com.mvc.util.I18NUtils.transform(inquiries, request);
+			com.mvc.util.I18NUtils.transform(messages, request);
+			com.mvc.util.I18NUtils.transform(serviceApplies, request);
+			request.setAttribute("inquiries", inquiries);
+			request.setAttribute("messages", messages);
+			request.setAttribute("serviceApplies", serviceApplies);
+		}
+		return "member/memberCenterForSeller";
+	}
+
+	// 买家中心
+	@RequestMapping(value = "/buyerCenter")
+	public String buyerCenter(HttpServletRequest request, HttpServletResponse response) {
+		Long memberId = (Long) request.getSession().getAttribute(HYConstants.MEMBER_ID);
+		Member member = memberManager.getByObjectId(memberId);
+		request.setAttribute("member", member);
+		if (member.getCompanyId()!=null) {
+			request.setAttribute("company", companyManager.getByObjectId(member.getCompanyId()));
+			List<ServiceApply> serviceApplies= serviceApplyManager.getServiceApplies(5, memberId);
+			List<Quotation> quotations=quotationManager.getQuotations(5, member.getCompanyId());
+			if (serviceApplies.size() > 0) {
+				for (ServiceApply sa : serviceApplies) {
+					com.mvc.service.model.Service service=serviceManager.getByObjectId(sa.getServiceId());
+					com.mvc.util.I18NUtils.transform(service, request);
+					sa.setService(service);
+				}
+			}
+			com.mvc.util.I18NUtils.transform(serviceApplies, request);
+			com.mvc.util.I18NUtils.transform(quotations, request);
+			request.setAttribute("serviceApplies", serviceApplies);
+			request.setAttribute("quotations", quotations);
+		}
+		return "member/memberCenterForBuyer";
+	}
+
+	// 账户设置
+	@RequestMapping("/modifyAccount")
+	public String modifyAccount(HttpServletRequest request, HttpServletResponse response) {
+		return BASE_DIR + "modifyAccount";
+	}
+
+	// 询盘查询
+	@RequestMapping("/searchInquiry")
+	public String searchInquiry(HttpServletRequest request, HttpServletResponse response)  throws Exception{
+		Member member = (Member) request.getSession().getAttribute(HYConstants.SESSION_MEMBER);
+		Long companyId = member.getCompanyId();
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String fromCompanyName = "";
+		if(companyId!=null){
+			fromCompanyName = companyManager.getByObjectId(companyId).getNameZh();
+		}
+		PageSearch pageSearch = PageUtils.preparePage(request, Inquiry.class, true);
+		pageSearch.setPageSize(4);
+		String searchText = request.getParameter("searchText");
+		request.setAttribute("searchText", searchText);
+		String startDate = request.getParameter("startDate");
+		if (startDate != null && !startDate.equals("")) {
+			request.setAttribute("startDate", df.parse(startDate));
+		}
+		String endDate = request.getParameter("endDate");
+		if (endDate != null && !endDate.equals("")) {
+			request.setAttribute("endDate", df.parse(endDate));
+		}
+		String status =request.getParameter("status");
+		if (status != null && !status.equals("")) {
+			request.setAttribute("status",Integer.parseInt(status));
+		}
+		request.setAttribute("status", status);
+		inquiryManager.getInquiryPage(pageSearch, companyId, searchText, startDate, endDate, status);
+		List<Object[]> list = pageSearch.getList();
+		List<Inquiry> inquirys = new ArrayList<>();
+		for(Object[] obj : list){
+			Inquiry inquiry = new Inquiry();
+			inquiry.setObjectId(((BigInteger)obj[0]).longValue());
+			inquiry.setFromCompanyId(((BigInteger)obj[1]).longValue());
+			inquiry.setDescription((String)obj[2]);
+			inquiry.setSendDate((Date)obj[3]);
+			inquiry.setExpiredDate((Date)obj[4]);
+			inquiry.setProductId(((BigInteger)obj[5]).longValue());
+			inquiry.setProductName((String)obj[6]);
+			inquiry.setCatogoryId(((BigInteger)obj[7]).longValue());
+			inquiry.setQuantity((Double)obj[8]);
+			inquiry.setUnit((Integer)obj[9]);
+			inquiry.setMemberId(((BigInteger)obj[10]).longValue());
+			inquiry.setOfferStatus((Integer)obj[11]);
+			if(obj[12]!=null){
+				inquiry.setProductImg((String)obj[12]);
+			}
+			inquirys.add(inquiry);
+		}
+		request.setAttribute("pageSearch", pageSearch);
+		request.setAttribute("inquirys", inquirys);
+		request.setAttribute("fromCompanyName", fromCompanyName);
+		return BASE_DIR + "searchInquiry";
+	}
+
+	// 我的报价
+	@RequestMapping("/myQuotation")
+	public String myQuotation(HttpServletRequest request, HttpServletResponse response) throws Exception{
+		PageSearch pageSearch = PageUtils.preparePage(request, Quotation.class, true);
+		pageSearch.setPageSize(10);
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Long memberId = (Long) request.getSession().getAttribute(HYConstants.MEMBER_ID);
+		Member member = memberManager.getByObjectId(memberId);
+		Company company = companyManager.getByObjectId(member.getCompanyId());
+		if (company==null) {
+			return "redirect:/member/modifyCompany?message=company_status_no";
+		}else if(company.getStatus()==Company.COMPANY_STATUS_DRAFT){
+			return "redirect:/member/modifyCompany?message=company_status_draft";
+		}else if(company.getStatus()==Company.COMPANY_STATUS_PASSED){
+			pageSearch.getFilters().add(new PropertyFilter(Quotation.class.getName(), "EQL_fromCompanyId", member.getCompanyId()+""));
+			String searchText = request.getParameter("searchText");
+			if (searchText != null && !searchText.equals("")) {
+				pageSearch.getFilters().add(new PropertyFilter(Quotation.class.getName(), "LIKES_productName", searchText));
+			}
+			request.setAttribute("searchText", searchText);
+			String startDate = request.getParameter("startDate");
+			if (startDate != null && !startDate.equals("")) {
+				pageSearch.getFilters().add(new PropertyFilter(Quotation.class.getName(), "GED_sendDate", startDate));
+				request.setAttribute("startDate", df.parse(startDate));
+			}
+			String endDate = request.getParameter("endDate");
+			if (endDate != null && !endDate.equals("")) {
+				pageSearch.getFilters().add(new PropertyFilter(Quotation.class.getName(), "LED_sendDate", endDate));
+				request.setAttribute("endDate", df.parse(endDate));
+			}
+			pageSearch.setSortProperty("sendDate");
+			pageSearch.setSortOrder("desc");
+			quotationManager.find(pageSearch);
+			request.setAttribute("pageSearch", pageSearch);
+			return BASE_DIR + "myQuotation";
+		}else{
+			return "redirect:/member/modifyCompany?message=company_status_no_in_passed";
+		}
+	}
+	
+	// 报价删除
+	@RequestMapping("/deleteQuotation/{quotationId}")
+	public String deleteQuotation(HttpServletRequest request, HttpServletResponse response, @PathVariable Long quotationId) {
+		quotationManager.delete(quotationId);
+		return "redirect:/member/myQuotation";
+	}
+
+	// 展会管理
+	@RequestMapping("/modifyExhibition")
+	public String modifyExhibition(HttpServletRequest request, HttpServletResponse response) throws Exception{
+		PageSearch pageSearch = PageUtils.preparePage(request, Exhibition.class, true);
+		Long memberId = (Long) request.getSession().getAttribute(HYConstants.MEMBER_ID);
+		Member member = memberManager.getByObjectId(memberId);
+		Company company = companyManager.getByObjectId(member.getCompanyId());
+		if (company==null) {
+			return "redirect:/member/modifyCompany?message=company_status_no";
+		}else if(company.getStatus()==Company.COMPANY_STATUS_DRAFT){
+			return "redirect:/member/modifyCompany?message=company_status_draft";
+		}else if(company.getStatus()==Company.COMPANY_STATUS_PASSED){
+			String searchText = request.getParameter("searchText");
+			if (searchText != null && !searchText.equals("")) {
+				pageSearch.getFilters().add(new PropertyFilter(Exhibition.class.getName(), "LIKES_nameZh", searchText));
+				request.setAttribute("searchText", searchText);
+			}
+			String attendDate = request.getParameter("attendDate");
+			if (attendDate != null && !attendDate.equals("")) {
+				pageSearch.getFilters().add(new PropertyFilter(Exhibition.class.getName(), "LED_startDate", attendDate));
+				pageSearch.getFilters().add(new PropertyFilter(Exhibition.class.getName(), "GED_endDate", attendDate));
+				DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+				request.setAttribute("attendDate", df.parse(attendDate));
+			}
+			pageSearch.setPageSize(10);
+			pageSearch.setSortProperty("startDate");
+			pageSearch.setSortOrder("desc");
+			exhibitionManager.find(pageSearch);
+			request.setAttribute("pageSearch", pageSearch);
+			return BASE_DIR + "modifyExhibition";
+		}else{
+			return "redirect:/member/modifyCompany?message=company_status_no_in_passed";
+		}
+	}
+
+	// 展会删除
+	@RequestMapping("/deleteExhibition/{exhibitionId}")
+	public String deleteExhibition(HttpServletRequest request, HttpServletResponse response, @PathVariable Long exhibitionId) {
+		exhibitionManager.delete(exhibitionId);
+		return "redirect:/member/modifyExhibition";
+	}
+		
+	// 展会修改
+	@RequestMapping("/editExhibition/{exhibitionId}")
+	public String editExhibition(HttpServletRequest request, HttpServletResponse response, @PathVariable Long exhibitionId) throws Exception{
+		Exhibition entity =exhibitionManager.getByObjectId(exhibitionId);
+		String message = request.getParameter("message");
+		request.setAttribute("message", message);
+		request.setAttribute("entity",entity);
+		return BASE_DIR + "editExhibitionForeground";
+	}
+	
+	// 展会新建
+	@RequestMapping(value = "/createExhibition")
+	public String createExhibition(HttpServletRequest request, HttpServletResponse response, Exhibition t) throws Exception {
+		Long memberId = (Long) request.getSession().getAttribute(HYConstants.MEMBER_ID);
+		Member member = memberManager.getByObjectId(memberId);
+		Company company = companyManager.getByObjectId(member.getCompanyId());
+		if (company==null) {
+			return "redirect:/member/modifyCompany?message=company_status_no";
+		}else if(company.getStatus()==Company.COMPANY_STATUS_DRAFT){
+			return "redirect:/member/modifyCompany?message=company_status_draft";
+		}else if(company.getStatus()==Company.COMPANY_STATUS_PASSED){
+			return BASE_DIR + "editExhibitionForeground";
+		}else{
+			return "redirect:/member/modifyCompany?message=company_status_no_in_passed";
+		}
+	}
+	
+	/**
+	 * 保存修改后的展会信息
+	 */
+	@RequestMapping("/saveExhibition")
+    public String saveExhibition(HttpServletRequest request,ModelMap modelMap, @Valid Exhibition t, BindingResult result) throws Exception{
+		Long memberId = (Long) request.getSession().getAttribute(HYConstants.MEMBER_ID);
+		Member member = memberManager.getByObjectId(memberId);
+		String startDate = request.getParameter("startDate");
+		if (startDate != null && !startDate.equals("")) {
+			DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			t.setStartDate(df.parse(startDate));
+		}
+		String endDate = request.getParameter("endDate");
+		if (endDate != null && !endDate.equals("")) {
+			DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			t.setEndDate(df.parse(endDate));
+		}
+		if (member.getCompanyId() == null) {
+			return "redirect:/member/modifyCompany";
+		} else {
+			Company company = companyManager.getByObjectId(member.getCompanyId());
+			t.setCompanyId(company.getObjectId());
+	        exhibitionManager.save(t);
+	        return "redirect:/member/editExhibition/"+t.getObjectId()+"?message=common.base.success";
+		}
+    }
+
+	// 我的询价
+	@RequestMapping("/myEnquiry")
+	public String myEnquiry(HttpServletRequest request, HttpServletResponse response) {
+		Member member = (Member) request.getSession().getAttribute(HYConstants.SESSION_MEMBER);
+		Long memberId = (Long) request.getSession().getAttribute(HYConstants.MEMBER_ID);
+		Long companyId = member.getCompanyId();
+		PageSearch pageSearch = PageUtils.preparePage(request, Inquiry.class, true);
+		pageSearch.getFilters().add(new PropertyFilter(Inquiry.class.getName(), "EQL_memberId", memberId+""));
+		pageSearch.setPageSize(4);
+		pageSearch.setSortProperty("sendDate");
+		pageSearch.setSortOrder("desc");
+		inquiryManager.find(pageSearch);
+		List<Inquiry> inquirys=pageSearch.getList();
+		for (int j = 0; j < inquirys.size(); j++) {
+			Long o = inquirys.get(j).getObjectId();
+			Object[] params = new Object[2];
+			params[0] = o;
+			params[1] = companyId;
+//			List<Quotation> ss = quotationManager.getByInquireId(inquirys.get(j).getObjectId());
+			List<Quotation> ss = quotationManager.search("A.inquiryId = ? and A.toCompanyId = ?", params);
+			params = new Object[3];
+			params[0] = o;
+			params[1] = companyId;
+			params[2] = HYConstants.STATUS_NO;
+			List<Quotation> notReadNumber = quotationManager.search("A.inquiryId = ?  and A.toCompanyId = ? and A.status = ?", params);
+			inquirys.get(j).setNumber(ss.size());
+			inquirys.get(j).setNotReadNumber(notReadNumber.size());
+			if(inquirys.get(j).getProductId()!=0){
+				Product product = productManager.getByObjectId(inquirys.get(j).getProductId());
+				String productImg = product.getMainPicture();
+				inquirys.get(j).setProductImg(productImg);
+			}
+		}
+		request.setAttribute("pageSearch", pageSearch);
+		request.setAttribute("inquiries", inquirys);
+		return BASE_DIR + "myEnquiry";
+	}
+
+	// 我的足迹
+	@RequestMapping("/myTracks")
+	public String myTracks(HttpServletRequest request, HttpServletResponse response) throws Exception{
+		Long memberId = (Long) request.getSession().getAttribute(HYConstants.MEMBER_ID);
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		PageSearch pageSearch = PageUtils.preparePage(request, History.class, true);
+		pageSearch.getFilters().add(new PropertyFilter(History.class.getName(), "EQL_companyId", memberId+""));
+		pageSearch.getFilters().add(new PropertyFilter(History.class.getName(), "EQI_isDelete", 1+""));
+		String startDate = request.getParameter("startDate");
+		if (startDate != null && !startDate.equals("")) {
+			pageSearch.getFilters().add(new PropertyFilter(History.class.getName(), "GED_visitDate", startDate));
+			request.setAttribute("startDate", df.parse(startDate));
+		}
+		String endDate = request.getParameter("endDate");
+		if (endDate != null && !endDate.equals("")) {
+			pageSearch.getFilters().add(new PropertyFilter(History.class.getName(), "LED_visitDate", endDate));
+			request.setAttribute("endDate", df.parse(endDate));
+		}
+		Object type=request.getParameter("typee");
+		if (type!=null&&Integer.parseInt(type.toString())==1) {
+			pageSearch.getFilters().add(new PropertyFilter(History.class.getName(), "EQI_type",type+""));
+			pageSearch.setPageSize(8);
+			pageSearch.setSortProperty("visitDate");
+			pageSearch.setSortOrder("desc");
+			historyManager.find(pageSearch);
+			List<History> c =pageSearch.getList();
+			if (c.size() > 0) {
+				for (History history : c) {
+					List<CompanyCertificate> certificates=companyCertificateManager.getByCompanyId(history.getEntityId());
+					history.setCertificates(certificates);
+					List<BusinessType> b=businessTypeManager.getBusinessTypeByCompanyId(history.getEntityId());
+					history.setBusType(b);
+					history.setEntity(companyManager.getByObjectId(history.getEntityId()));
+				}
+			}
+			pageSearch.setList(c);
+			List<Country> countries=countryManager.getCountryByStatus(Country.COUNTRY_STATUS_NORMAL);
+			request.setAttribute("pageSearch", pageSearch);
+			com.mvc.util.I18NUtils.transform(pageSearch.getList(), request);
+			request.setAttribute("countries", countries);
+			com.mvc.util.I18NUtils.transform(countries, request);
+			return BASE_DIR + "myTracksForCompany";
+		} else {
+			pageSearch.getFilters().add(new PropertyFilter(History.class.getName(), "EQI_type", 0+""));
+			pageSearch.setPageSize(8);
+			pageSearch.setSortProperty("visitDate");
+			pageSearch.setSortOrder("desc");
+			historyManager.find(pageSearch);
+			List<History> historys=pageSearch.getList();
+			if (historys.size() > 0) {
+				for (History history : historys) {
+					List<Product> similarProduct=historyManager.getProductsByCategoryId(4, productManager.getByObjectId(history.getEntityId()).getCategoryId());
+					history.setSimilarProduct(similarProduct);
+					history.setEntity(productManager.getByObjectId(history.getEntityId()));
+				}
+			}
+			pageSearch.setList(historys);
+			List<Country> countries=countryManager.getCountryByStatus(Country.COUNTRY_STATUS_NORMAL);
+			com.mvc.util.I18NUtils.transform(countries, request);
+			request.setAttribute("pageSearch", pageSearch);
+			com.mvc.util.I18NUtils.transform(pageSearch.getList(), request);
+			request.setAttribute("countries", countryManager.getCountryByStatus(Country.COUNTRY_STATUS_NORMAL));
+			return BASE_DIR + "myTracksForProduct";
+		}
+	}
+
+	@RequestMapping("/productDetail/{objectId}")
+	public String productDetail(HttpServletRequest request, HttpServletResponse response, @PathVariable Long objectId) {
+		request.setAttribute("products", productManager.getByObjectId(objectId));
+		return BASE_DIR + "productDetails";
+	}
+
+	/**
+	 * 企业维护
+	 */
+	@RequestMapping("/modifyCompany")
+	public String modifyCompany(HttpServletRequest request, HttpServletResponse response) {
+		String message = request.getParameter("message");
+		request.setAttribute("message", message);
+		Long memberId = (Long) request.getSession().getAttribute(HYConstants.MEMBER_ID);
+		Member member = memberManager.getByObjectId(memberId);
+		Company entity = companyManager.getByObjectId(member.getCompanyId());
+		request.setAttribute("entity", entity);
+		request.setAttribute("countries", countryManager.getCountryByStatus(Country.COUNTRY_STATUS_NORMAL));
+		if (entity != null) {
+			request.setAttribute("businessTypeSelect", businessTypeManager.getBusinessTypeByCompanyId(entity.getObjectId()));
+			List<CompanyMedia> subpictures = companyMediaManager.getBycompanyIdAndType(entity.getObjectId(), CompanyMedia.MEDIA_TYPE_PICTURE);
+			String subpictureStr = "";
+			for (CompanyMedia pm : subpictures) {
+				subpictureStr = subpictureStr + pm.getContentUrl() + ",";
+			}
+			if (subpictures.size() > 0) {
+				subpictureStr = subpictureStr.substring(0, subpictureStr.length() - 1);
+			}
+			request.setAttribute("subpictures", subpictures);
+			request.setAttribute("subpictureStr", subpictureStr);
+			// 得到资质证书
+			List<CompanyCertificateFile> ISOfiles = companyCertificateFileManager.getByCompanyId(entity.getObjectId());
+			request.setAttribute("ISOpictures", ISOfiles);
+		}
+		return BASE_DIR + "modifyCompany";
+	}
+
+	/**
+	 * 保存修改后的企业维护
+	 */
+	@RequestMapping("/saveCompany")
+	public String saveCompany(HttpServletRequest request, ModelMap modelMap, @Valid Company t, BindingResult result) throws Exception {
+		String foundingDate = request.getParameter("foundingDate");
+		if (foundingDate != null && !foundingDate.equals("")) {
+			DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+			t.setFoundingDate(df.parse(foundingDate));
+		}
+		if (t.getIsSupplier()==null) {
+			t.setIsSupplier(Company.COMPANY_ISSUPPLIER_TRUE);
+		}
+		companyManager.saveCompany(t);
+		companyManager.update(t.getObjectId());
+		
+		Long memberId = (Long) request.getSession().getAttribute(HYConstants.MEMBER_ID);
+		Member member = memberManager.getByObjectId(memberId);
+		member.setCompanyId(t.getObjectId());
+		memberManager.save(member);
+		memberManager.update(member.getObjectId());
+		String subPicture = request.getParameter("subPicture");
+		companyMediaManager.save(t.getObjectId(), subPicture);
+
+		String businessTypeSelect[] = request.getParameterValues("businessType");
+		businessTypeManager.deleteByCompanyId(t.getObjectId());
+		if (businessTypeSelect != null) {
+			for (int i = 0; i < businessTypeSelect.length; i++) {
+				BusinessType businessType = new BusinessType();
+				businessType.setType((Integer.parseInt(businessTypeSelect[i])));
+				businessType.setCompanyId(t.getObjectId());
+				businessTypeManager.save(businessType);
+			}
+		}
+		// 得到资质的信息
+		List<CompanyCertificate> pas = new ArrayList<CompanyCertificate>();// 资质信息的集合
+		String[] qualification = request.getParameterValues("qualification");
+		if (qualification != null && qualification.length > 0) {
+			for (String qualiValue : qualification) {
+				String remark = request.getParameter("qualificationContent_" + qualiValue);
+				CompanyCertificate pa = new CompanyCertificate();
+				pa.setCompanyId(t.getObjectId());
+				pa.setType(Integer.valueOf(qualiValue));
+				pa.setContent(remark);
+				pas.add(pa);
+			}
+		}
+		companyCertificateManager.save(t.getObjectId(), pas);
+
+		// 保存资质图片
+		String isoPicture = request.getParameter("isoPicture");
+		companyCertificateFileManager.save(t.getObjectId(), isoPicture);
+
+		return "redirect:/member/modifyCompany?message=common.base.success";
+	}
+
+	/**
+	 * 保存修改的密码
+	 */
+	@RequestMapping("/savePassword")
+	public String savePassword(HttpServletRequest request, ModelMap modelMap) {
+		HttpSession session = request.getSession();
+		Long objectId = Long.parseLong(session.getAttribute(HYConstants.MEMBER_ID).toString());
+		String newPassword = request.getParameter("newPassword");
+		Member member = memberManager.getByObjectId(objectId);
+		member.setPassword(SecurityUtils.generatePassword(newPassword));
+		memberManager.updatePassword(member);
+		return "redirect:/home/login/out";
+	}
+
+	/**
+	 * 保存修改的邮箱号
+	 */
+	@RequestMapping("/saveEmail")
+	public String saveEmail(HttpServletRequest request, ModelMap modelMap) {
+		Member member = (Member) request.getSession().getAttribute(HYConstants.SESSION_MEMBER);
+		if (member == null) {
+			return "redirect:/home/login";
+		} else {
+			String email = request.getParameter("email");
+			member.setLoginName(email);
+			memberManager.save(member);
+			return "redirect:/home/login/out";
+		}
+	}
+
+	/**
+	 * 我的站内信(买家)
+	 *
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping("/myMessage")
+	public String myMessage(HttpServletRequest request, HttpServletResponse response) {
+		Long memberId = (Long) request.getSession().getAttribute(HYConstants.MEMBER_ID);
+		if (memberId == null) {
+			try {
+				response.getWriter().write("请先登录！");
+				return null;
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		PageSearch pageSearch = PageUtils.preparePage(request, Message.class, true);
+
+		Member member = memberManager.getByObjectId(memberId);
+		if (member != null) {
+			if (member.getCompanyId() != null) {
+				pageSearch.getFilters().add(new PropertyFilter(Message.class.getName(), "EQL_t1.from_company", member.getCompanyId() + ""));
+			} else {
+				pageSearch.getFilters().add(new PropertyFilter(Message.class.getName(), "EQL_t1.from_user", memberId + ""));
+			}
+		}
+		
+		messageManager.searchMessageForBuyer(pageSearch);
+		List<Object[]> list = pageSearch.getList();
+		String language=LocaleUtils.getLocale(request).getLanguage();
+		request.setAttribute("la", language);
+		request.setAttribute("pageSearch", pageSearch);
+		request.getSession().setAttribute("action", "/member/myMessage");
+		return BASE_DIR + "listMessageForBuyer";
+	}
+
+	/**
+	 * 我的站内信(卖家)
+	 *
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping("/yourMessage")
+	public String yourMessage(HttpServletRequest request, HttpServletResponse response) {
+		PageSearch pageSearch = PageUtils.preparePage(request, Message.class, true);
+		Member member = (Member) request.getSession().getAttribute(HYConstants.SESSION_MEMBER);
+		if (member != null && member.getCompanyId() != null) {
+			pageSearch.getFilters().add(new PropertyFilter(Message.class.getName(), "EQL_t1.to_company", member.getCompanyId() + ""));
+			messageManager.searchMessageForSeller(pageSearch);
+		}
+		String language=LocaleUtils.getLocale(request).getLanguage();
+		request.setAttribute("la", language);
+		request.setAttribute("pageSearch", pageSearch);
+		request.getSession().setAttribute("action", "/member/yourMessage");
+		return BASE_DIR + "listMessageForSeller";
+	}
+
+	/**
+	 * 站内信置为已读
+	 *
+	 * @param request
+	 * @param response
+	 * @param id
+	 * @param map
+	 * @return
+	 */
+	@RequestMapping("/updateMessage/{id}")
+	public String updateMessage(HttpServletRequest request, HttpServletResponse response, @PathVariable Long id, ModelMap map) {
+		Message t = messageManager.getByObjectId(id);
+		if (t != null && t.getIsSee().equals(HYConstants.STATUS_NO)) {
+			t.setIsSee(HYConstants.STATUS_YES);
+		}
+		messageManager.save(t);
+		map.addAttribute("result", true);
+		map.addAttribute("message", t);
+		return "jsonView";
+	}
+
+	/**
+	 * 批量置为已读
+	 *
+	 * @param request
+	 * @param response
+	 * @param ids
+	 * @param map
+	 * @return
+	 */
+	@RequestMapping("/updateMessage")
+	public String updateMessage(HttpServletRequest request, HttpServletResponse response, String ids, ModelMap map) {
+		String message = I18NUtils.transformName("置为已读成功", "Success", LocaleUtils.getLocale(request));
+		if (StringUtils.isNotBlank(ids)) {
+			String[] idStrs = ids.split(",");
+			for (String idStr : idStrs) {
+				Long messageId = Long.parseLong(idStr);
+				Message t = messageManager.getByObjectId(messageId);
+				if (t != null && t.getIsSee().equals(HYConstants.STATUS_NO)) {
+					t.setIsSee(HYConstants.STATUS_YES);
+				}
+				messageManager.save(t);
+			}
+		} else {
+			message = I18NUtils.transformName("置为已读失败，你未选择任何消息记录", "Please select at least one record", LocaleUtils.getLocale(request));
+		}
+		map.addAttribute("message", message);
+		return "jsonView";
+	}
+
+	
+	//发布报价
+	@RequestMapping("/releaseOffer")
+	public String releaseOffer(HttpServletRequest request){
+		try {
+			String message = quotationManager.saveOffer(request);
+			if(!("success").equals(message)){
+				return "redirect:/member/modifyCompany?message="+message;
+			}
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return "redirect:/member/searchInquiry";
+	}
+	
+	@RequestMapping("/getQuotationInfo")
+	public String getQuotationInfo(HttpServletRequest request, ModelMap map) {
+		String inquiryIdStr = request.getParameter("inquiryId");
+		if(StringUtils.isNotBlank(inquiryIdStr)){
+			Long inquiryId = Long.parseLong(inquiryIdStr);
+			Member member = (Member) request.getSession().getAttribute(HYConstants.SESSION_MEMBER);
+			Long fromCompanyId = member.getCompanyId();
+			Quotation quotation = quotationManager.getQuotation(inquiryId, fromCompanyId);
+			map.addAttribute("quotation", quotation);
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			String sendDate = sdf.format(quotation.getSendDate());
+			map.addAttribute("sendDate", sendDate);
+			List<PaymentTerm> paymentTerms = paymentTermManager.getPaymentTermByQuotationId(quotation.getObjectId());
+			map.addAttribute("paymentTerms", paymentTerms);
+		}
+		return "jsonView";
+	}
+	
+	//发布询盘
+	@RequestMapping("/releaseInquiry")
+	public String releaseInquiry(HttpServletRequest request){
+		String message = inquiryManager.saveInquiryInfo(request);
+		if(("success").equals(message)){
+			return "redirect:/home/inquireList";
+		}else{
+			return "redirect:/member/modifyCompany?message="+message;
+		}
+	}
+	
+	@RequestMapping("/getProductInfo")
+	public String getProductInfo(HttpServletRequest request, ModelMap map) {
+		String productIdStr = request.getParameter("productId");
+		if(StringUtils.isNotBlank(productIdStr)){
+			Long productId = Long.parseLong(productIdStr);
+			Product product = productManager.getByObjectId(productId);
+			map.addAttribute("product", product);
+			Member member = (Member) request.getSession().getAttribute(HYConstants.SESSION_MEMBER);
+			Long companyId = member.getCompanyId();
+			if(companyId!=null){
+				Company company = companyManager.getByObjectId(companyId);
+				map.addAttribute("fromCompanyName",company.getNameZh());
+			}
+		}
+		return "jsonView";
+	}
+	
+	@RequestMapping("/readInquiry")
+	public String readInquiry(HttpServletRequest request, ModelMap map) {
+		String inquiryIdStr = request.getParameter("inquiryId");
+		Member member = (Member) request.getSession().getAttribute(HYConstants.SESSION_MEMBER);
+		Long companyId = member.getCompanyId();
+		if(StringUtils.isNotBlank(inquiryIdStr)){
+			Long inquiryId = Long.parseLong(inquiryIdStr);
+			inquiryItemManager.updateOfferStatus(HYConstants.HAVE_READ, companyId, inquiryId);
+			inquiryItemManager.update(inquiryId);
+			Inquiry inquiry = inquiryManager.getByObjectId(inquiryId);
+			Company company = companyManager.getByObjectId(inquiry.getFromCompanyId());
+			if(company!=null){
+				String toCompanyName = company.getNameZh();
+				map.addAttribute("toCompanyName",toCompanyName);
+			}
+			
+		}
+		
+		return "jsonView";
+	}
+	
+	//我的询盘报价
+	@RequestMapping("/listQuotation")
+	public String listQuotation(HttpServletRequest request, HttpServletResponse response) {
+		String inquiryIdStr = request.getParameter("inquiryId");
+		String status = request.getParameter("status");
+		if(StringUtils.isNotBlank(inquiryIdStr)){
+			PageSearch pageSearch = PageUtils.preparePage(request, Quotation.class, true);
+			pageSearch.getFilters().add(new PropertyFilter(Quotation.class.getName(), "EQL_inquiryId", inquiryIdStr));
+			if(StringUtils.isNotBlank(status)){
+				pageSearch.getFilters().add(new PropertyFilter(Quotation.class.getName(), "EQI_status", status));
+			}
+			pageSearch.setPageSize(5);
+			pageSearch.setSortProperty("sendDate");
+			pageSearch.setSortOrder("asc");
+			quotationManager.find(pageSearch);
+			List<Quotation> quotations=pageSearch.getList();
+			if(StringUtils.isNotBlank(status)){
+				for(Quotation quotation : quotations){
+					Quotation entity = new Quotation();
+					entity.setObjectId(quotation.getObjectId());
+					entity.setStatus(HYConstants.STATUS_YES);
+					quotationManager.updateDynamic(entity);
+					quotationManager.update(quotation.getObjectId());
+				}
+			}
+			request.setAttribute("pageSearch", pageSearch);
+			request.setAttribute("quotations", quotations);
+		}
+		return BASE_DIR + "listQuotation";
+	}
+
+	/**
+     * 站内信的保存
+     * @param request
+     * @param modelMap
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/saveMyMessage")
+    @ResponseBody
+	public ModelMap saveMyMessage(HttpServletRequest request,HttpServletResponse response){
+		Message t = new Message();
+		ModelMap modelMap = new ModelMap();
+		String msg=I18NUtils.transformName("发送成功！", "Success！", LocaleUtils.getLocale(request));
+		//登录人的ID
+		HttpSession session = request.getSession();
+		Long userId = Long.parseLong(session.getAttribute(HYConstants.MEMBER_ID).toString());
+		t.setFromUser(userId);
+		Member member=memberManager.getByObjectId(userId);
+		if (member!=null && member.getCompanyId()!=null) {
+			t.setFromCompany(member.getCompanyId());
+		}
+		String msgID=request.getParameter("msgId");
+		if (StringUtils.isNotBlank(msgID)) {
+			Message source=messageManager.getByObjectId(Long.parseLong(msgID));
+			if (source.getFromCompany()!=null) {
+				t.setToCompany(source.getFromCompany());
+			}
+		}
+		t.setTitle(request.getParameter("title"));
+		t.setContent(request.getParameter("content"));
+		t.setIsSee(HYConstants.STATUS_NO);
+		t.setSendDate(new Date());
+		t.setType(HYConstants.MESSAGE_TYPE_PLATFORM);
+		try {
+			messageManager.save(t);
+			modelMap.addAttribute("result", true);
+		} catch (Exception e) {
+			msg=I18NUtils.transformName("发送失败！", "Failed！", LocaleUtils.getLocale(request));
+			modelMap.addAttribute("result", false);
+		}
+		modelMap.addAttribute("msg",msg);
+		return modelMap;
+	}
+}

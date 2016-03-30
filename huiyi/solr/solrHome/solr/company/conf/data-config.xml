@@ -1,0 +1,50 @@
+<dataConfig>
+    <dataSource name="dataSource" driver="com.mysql.jdbc.Driver" url="jdbc:mysql://test.neefull.com:3306/huiyi" user="huiyi" password="huiyi"/>
+    <document>
+        <entity name="company" pk="OBJECT_ID" dataSource="dataSource" transformer="HTMLStripTransformer"
+        query="select OBJECT_ID,NAME_ZH,NAME_EN,LEVEL,IS_CHECK,IS_ALLOW,DESCRIPTION_ZH,DESCRIPTION_EN,UPDATE_DATE,MAIN_PRODUCTS_ZH,MAIN_PRODUCTS_EN,NUM_EMPLOYEES,
+        (select tc.name_zh from t_country tc where tc.object_id=cp.country_id)COUNTRY_NAME_ZH,
+        (select tc.name_en from t_country tc where tc.object_id=cp.country_id)COUNTRY_NAME_EN,
+        (select GROUP_CONCAT(tcc.content) from t_company_certificate tcc where tcc.COMPANY_ID=cp.OBJECT_ID group by tcc.COMPANY_ID) QUALITY_CERTIFICA
+        from t_company cp" 
+        deltaQuery="select OBJECT_ID  from t_company where update_date > str_to_date('${dataimporter.last_index_time}','%Y-%m-%d %H:%i:%s')"  
+        deletedPkQuery="select OBJECT_ID from t_company where is_deleted=0"
+        deltaImportQuery="select OBJECT_ID,NAME_ZH,NAME_EN,LEVEL,IS_CHECK,IS_ALLOW,DESCRIPTION_ZH,DESCRIPTION_EN,UPDATE_DATE,MAIN_PRODUCTS_ZH,MAIN_PRODUCTS_EN,NUM_EMPLOYEES,
+        (select tc.name_zh from t_country tc where tc.object_id=cp.country_id)COUNTRY_NAME_ZH,
+        (select tc.name_en from t_country tc where tc.object_id=cp.country_id)COUNTRY_NAME_EN
+        from t_company cp where cp.OBJECT_ID='${dataimporter.delta.OBJECT_ID}'">
+        
+            <field column="OBJECT_ID" name="id"/>
+            <field column="NAME_ZH" name="name_zh"/>
+            <field column="NAME_EN" name="name_en"/>
+            <field column="LEVEL" name="member_level"/>
+            <field column="IS_CHECK" name="is_check_factory"/>
+            <field column="IS_ALLOW" name="is_allow"/>
+            <field column="DESCRIPTION_ZH" name="description_zh" stripHTML="true"/>
+            <field column="DESCRIPTION_EN" name="description_en" stripHTML="true"/>
+            <field column="COUNTRY_NAME_ZH" name="country_name_zh"/>
+            <field column="COUNTRY_NAME_En" name="country_name_en"/>
+            <field column="QUALITY_CERTIFICA" name="quality_certifica"/>
+            <field column="UPDATE_DATE" name="update_date"/>
+            <field column="MAIN_PRODUCTS_ZH" name="main_products_zh"/>
+            <field column="MAIN_PRODUCTS_EN" name="main_products_en"/>
+            <field column="NUM_EMPLOYEES" name="num_employees"/>
+            <entity name="companyType" 
+            query="select TYPE from t_business_type where COMPANY_ID='${company.OBJECT_ID}'">
+                <field column="TYPE" name="company_type"/>
+            </entity >
+            <entity name="certifica" 
+            query="select tcc.type AUDIT_PROFILE,tcc.content QUALITY_CERTIFICAS from t_company_certificate tcc where tcc.COMPANY_ID='${company.OBJECT_ID}'">
+                <field column="AUDIT_PROFILE" name="audit_profile"/>
+                <field column="QUALITY_CERTIFICAS" name="quality_certificas"/>
+            </entity >
+            <entity name="product" 
+            query="select p.NAME_ZH,p.NAME_EN,p.OBJECT_ID,ifnull(p.MAIN_PICTURE,'') MAIN_PICTURE from p_product p where p.supplier_id='${company.OBJECT_ID}' and p.is_main=1 and p.type=2 and (select count(*) from p_sku tmp where tmp.product_id=p.object_id and tmp.deleted=0 and tmp.status=5)>0">
+                <field column="NAME_ZH" name="main_product_name_zh"/>
+                <field column="NAME_EN" name="main_product_name_en"/>
+                <field column="OBJECT_ID" name="main_product_id"/>
+                <field column="MAIN_PICTURE" name="main_product_picture_path"/>
+            </entity >
+        </entity>
+    </document>
+</dataConfig>

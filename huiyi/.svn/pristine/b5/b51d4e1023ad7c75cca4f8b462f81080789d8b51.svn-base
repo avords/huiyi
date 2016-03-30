@@ -1,0 +1,215 @@
+<%@ page language="java" contentType="text/html; charset=utf-8"
+	pageEncoding="utf-8"%>
+<%@ include file="../common/taglibs.jsp"%>
+<!DOCTYPE html>
+<html>
+<head>
+<title>询盘列表页</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="${dynamicDomain}/static/assets/css/list.css">
+<jdf:themeFile file="jquery.SuperSlide.2.1.1.js" />
+<jdf:themeFile file="bootstrap.min.js" />
+<jdf:themeFile file="jquery.twbsPagination.js" />
+
+</head>
+
+<body>
+	<div class="wrapper">
+		<div class="pro-wz">
+			<a href="${dynamicDomain}/home"><jdf:message code="menu_home"/></a> &gt; <jdf:message code="menu_inquiry_list" />
+		</div>
+		<div class="container porList">
+			<div class="side">
+					<div class="nav-service">
+						<h2>产品分类</h2>
+						<c:forEach var="item" items="${productDirectory}" varStatus="num">
+							<dl>
+							<dt>
+								<a href="${dynamicDomain}/home/search?type=1&data-value=category_name1_zh:${item.nameZh}">${item.getNameZh()}</a>
+								<a class=" pull-right help-icon sNav" href="#"></a>
+							</dt>
+								<c:forEach var="item1" items="${item.getListCategorys()}" varStatus="num1">
+								<c:choose>
+									<c:when test="${num1.index < 4 }">
+										<dd>
+											<a href='${dynamicDomain}/home/search?type=1&data-value=category_name1_zh:${item.nameZh}&data-value=category_name2_zh:<huiyi:i18n object="${item1}" name="name"/>'><huiyi:i18n object="${item1}" name="name" /></a>
+										</dd>
+									</c:when>
+									<c:when test="${num1.index == 4 }">
+										<dd class="more">
+											<a href="${dynamicDomain}home/productServices">More <i class="fa fa-angle-right"></i></a>
+										</dd>
+									</c:when>
+									<c:otherwise></c:otherwise>
+								</c:choose>
+							</c:forEach>
+							</dl>
+						</c:forEach>
+				</div>
+				<div class="attribute">
+					<h3>
+						<i class="fa fa-gg"></i>产品属性
+					</h3>
+					<ul>
+						<li class="checkbox"><label> <input type="checkbox">
+								产品特性
+						</label></li>
+						<li class="checkbox"><label> <input type="checkbox">
+								颜色
+						</label></li>
+						<li class="checkbox"><label> <input type="checkbox">
+								产品特性
+						</label></li>
+						<li class="checkbox"><label> <input type="checkbox">
+								材质
+						</label></li>
+					</ul>
+				</div>
+				<div class="attribute">
+					<h3>
+						<i class="fa fa-gg"></i>产品属性
+					</h3>
+					<ul>
+						<li class="checkbox"><label> <input type="checkbox">
+								产品特性
+						</label></li>
+						<li class="checkbox"><label> <input type="checkbox">
+								颜色
+						</label></li>
+						<li class="checkbox"><label> <input type="checkbox">
+								产品特性
+						</label></li>
+						<li class="checkbox"><label> <input type="checkbox">
+								材质
+						</label></li>
+					</ul>
+				</div>
+			</div>
+			<div class="main">
+				<div class="listTitle">
+					<div class="tit">
+						<h3>
+							<em>询盘列表</em>
+						</h3>
+						<span><a class="btn btn-success btn-sm colorbox-large" href="${dynamicDomain}/home/servicesList/1?ajax=1">优化采购</a></span>
+					</div>
+					<div class="cont clearfix">
+						<dl>
+							<dt>国家：</dt>
+							<dd>
+								<c:forEach var="asl" items="${liss}">
+									<a href="#"><label> <input type="checkbox">${asl.nameZh}</label>
+									</a>
+								</c:forEach>
+							</dd>
+						</dl>
+						<dl>
+							<dt>会员类型：</dt>
+							<dd class="checkbox">
+								<a href="#"> <label> <input type="checkbox">
+										贸易保
+								</label>
+								</a> <a href="#"> <label> <input type="checkbox">
+										金牌
+								</label>
+								</a> <a href="#"> <label> <input type="checkbox">
+										已验厂供应商
+								</label>
+								</a> <a href="#"> <label> <input type="checkbox">
+										已许可供应商
+								</label>
+								</a>
+							</dd>
+						</dl>
+						<dl>
+							<dt>资质证书：</dt>
+							<dd class="checkbox">
+								<a href="#"> <label> <input type="checkbox">
+										IOS
+								</label>
+								</a> <a href="#"> <label> <input type="checkbox">
+										CE
+								</label>
+								</a> <a href="#"> <label> <input type="checkbox">
+										FDA
+								</label>
+								</a>
+							</dd>
+						</dl>
+						<dl>
+							<dt>企业性质：</dt>
+							<dd class="checkbox">
+								<a href="#"> <label> <input type="checkbox">
+										生产商
+								</label>
+								</a> <a href="#"> <label> <input type="checkbox">
+										贸易商
+								</label>
+								</a> <a href="#"> <label> <input type="checkbox">
+										分销商
+								</label>
+								</a> <a href="#"> <label> <input type="checkbox">
+										医疗机构
+								</label>
+								</a> <a href="#"> <label> <input type="checkbox">
+										科研教学
+								</label>
+								</a>
+							</dd>
+						</dl>
+					</div>
+				</div>
+				<div class="listCont">
+					<div class="inquire-title">
+						<span class="w1"></span> <span class="w2">提交日期</span> <span
+							class="w3">已收到报价（个）</span>
+					</div>
+					<c:if test="${inquirys!=null}">
+						<c:forEach var="asl" items="${inquirys}">
+							<div class="inquire-node">
+								<div class="title">
+									<h3>
+										<a href="#">${ asl.productName}</a>
+									</h3>
+									<span><fmt:formatDate value="${ asl.sendDate}"
+											pattern="yyyy-MM-dd" /></span> <span><a href="${dynamicDomain}/member/listQuotation?inquiryId=${asl.objectId}">${ asl.number}</a></span>
+								</div>
+								<div class="inquire-cont">
+									<c:if test="${not empty asl.productImg  }">
+										<a href="#"><img src="${asl.productImg }" /></a>
+									</c:if>
+									<div>采购数量：${asl.quantity }</div>
+									<p
+										style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis">${ asl.description}</p>
+								</div>
+							</div>
+						</c:forEach>
+					</c:if>
+					<!-- 分页 -->
+					<div class="pagination" id="pagination" style="margin-left: 300px">
+						<div class="page_numbers"></div>
+					</div>
+					<!--/ 分页 -->
+				</div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		$(function(){
+			$(".colorbox-large").colorbox({ width: "80%", height:"80%", close: "关闭", overlayClose: false});
+			<c:if test="${pageSearch.totalPage != 0}">
+	        $("#pagination").twbsPagination({
+	              totalPages: ${pageSearch.totalPage},
+	              visiblePages: 5,
+	              startPage:${pageSearch.currentPage},
+	              onPageClick: function (event, page) {
+	                $('#page-content').text('Page ' + page);
+	                window.location.href = "${dynamicDomain}/home/inquireList?ec_p="+page;
+	           }
+	        });
+	       </c:if>
+		});
+	</script>
+</body>
+</html>

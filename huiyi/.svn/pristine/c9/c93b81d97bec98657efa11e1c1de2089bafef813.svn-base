@@ -1,0 +1,81 @@
+body { font-family: 'Microsoft YaHei'; }
+.logo { width: 143px; height: 60px; margin-left: 5px!important; background: url(../img/logo.png) no-repeat; }
+.container { width: 1170px !important; max-width: none !important; padding-right: 0; padding-left: 0; }
+ol, ul { margin: 0; padding: 0; list-style: none; }
+h1, h2, h3, h4, p, dl, dt, dd { margin: 0; padding: 0; }
+a { transition: all .3s; }
+a:hover{ color:#f60;}
+.red{color:#f30;}
+
+/*姗欒壊鎸夐挳*/
+.btn-u.btn-brd.btn-u-orange { font-size: 15px; border-color: #f30; background: #fefbf6; }
+.btn-u.btn-brd.btn-u-orange:hover { color: #f30; border-color: #d35400; background: #fff; }
+.btn-u.btn-brd.btn-u-orange.btn-brd-hover:hover { background: #d35400; }
+/* 瀵艰埅 */
+.navbar-header { float: none; }
+.navbar-header .rightSearch { width: 100%; height: auto; padding: 0 10px; }
+.navbar-header .rightSearch .form-group { float: left; margin-bottom: 0; }
+.navbar-header .rightSearch p { font-size: 13px; clear: both; overflow: hidden; margin: 0; padding: 5px 0 0; color: #999; }
+.navbar-header .rightSearch p span.tag { float: left; }
+.navbar-header .rightSearch p span.tag a:hover { color: #f60; }
+.navbar-header .rightSearch p span.yh { float: right; padding-right: 35px; }
+.navbar-header .rightSearch p span.yh a { padding-right: 10px; color: #53a40b; }
+.navbar-header .rightSearch p a { padding: 0 5px; color: #999; }
+.reg-title { font-size: 14px; margin-bottom: 20px; padding: 10px 20px; background: #f8f8f8; }
+.navbar-header .rightSearch .form-group select, .navbar-header .rightSearch .form-group input { border: none; }
+/* 浜у搧鍒楄〃 */
+.proNav-type { font-size: 12px; padding: 6px 30px 6px 17px; color: #555; border-top: 1px solid #ddd; }
+.proNav .checkbox { margin: 0; }
+/* 瀵艰埅瑕嗙洊 */
+.header-v4 .navbar li { border-right: 1px solid #ddd; }
+.header-v4 .navbar li.active { border-top: none!important; background: #ef5f17; }
+.header-v4 .navbar li.active > a { color: #fff!important; }
+.header-v4 .navbar-nav > li > a:hover { transition: all .3s; color: #fff!important; background: #ef5f17!important; }
+/* 绾㈣壊鎻愮ず妗�*/
+.bg-danger { color: #f30; border: 1px solid #f96; background-color: #fef4ef; }
+/* 澶撮儴涓嬫媺 */
+
+.loginbar li { position: relative; }
+.loginbar li:hover .down { display: block; }
+.loginbar li .down { position: absolute; z-index: 99; top: 34px; left: 0; display: none; box-sizing: content-box; width: 100%; padding: 5px 0; border: 1px solid #ddd; border-top: none; background: #f9f9f9; }
+.loginbar li .down a { line-height: 24px; display: block; text-align: left; padding-left: 10px;}
+.loginbar li .down a:hover { color: #fff; background: #ef5f17; }
+/* 鏂版墜涓婅矾 */
+.foot-help { border-top: 1px solid #ddd; background: #f8f8f8; }
+.foot-help ul { padding: 25px 0; background: url(../img/title-sj.png) no-repeat right top; }
+.foot-help li { float: left; width: 205px; }
+.foot-help li.tel { width: 350px; min-height: 65px; padding-top: 10px; padding-left: 50px; border-left: 1px solid #ddd; }
+.foot-help li.tel p { line-height: 24px; color: #333; }
+.foot-help li.tel p span { font-family: Arial, Helvetica, sans-serif; font-size: 18px; }
+.foot-help li.tel p i { font-size: 20px; margin-right: 10px; color: #ef5f17; }
+.foot-help li dl { padding-left: 20px; }
+.foot-help li dt { height: 28px; }
+.foot-help li dd a { color: #777; }
+.foot-help li dd a:hover { color: #f60; }
+
+/* ===== 汇医服务 ===== */
+.hy-service { padding-top:10px;}
+.hy-service .wz{ color:#999; font-size:12px; padding-left:10px;}
+.hy-service .wz a{ color:#666; }
+.hy-service .headline { border: 1px solid #ddd; display: block; margin: 10px 0; background: #f9f9f9; }
+.hy-service .headline h2 { display: inline-block; padding: 4px 20px; border-bottom: 2px solid #ef5f17; font-size: 18px; color: #666; text-transform: uppercase; margin: 0; }
+.hy-service .view { text-align: center; padding: 20px 10px; border-bottom: 1px dashed #ccc; }
+.hy-service .view:hover { border-bottom: 1px dashed #999; }
+.hy-service .view img { height: 120px; display: inline-block; }
+.hy-service .view img:hover { opacity: .85; }
+.hy-service .view h3 { font-size: 15px; color: #4765a0; padding: 10px 0;white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+.hy-service .view h3 a { color: #4765a0;}
+.hy-service .view:hover h3 a { color: #ef5f17; }
+.hy-service .view p { text-align: left; color: #666; margin-bottom: 20px; line-height: 20px;padding: 5px 0; font-size: 13px; color: #999; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+.hy-service .view p span { padding-left: 20px; }
+.hy-service .view .btn-more a { margin-right: 10px; }
+
+
+.hy-service .hy-detail { padding:10px 0;}
+.hy-service .hy-detail .box { margin-bottom:20px;}
+.hy-service .hy-detail .box .tit{ background:#f9f9f9; border:1px solid #ddd; }
+.hy-service .hy-detail .box .tit h3{ display:inline-block; padding:5px 20px; font-size:16px;border-bottom: 2px solid #6499d2;}
+.hy-service .hy-detail .box .content{ padding:20px;}
+.hy-service .hy-detail .box .imgList{ clear:both; overflow:hidden;}
+.hy-service .hy-detail .box .imgList li{ float:left; width:20%; text-align:center;}
+.hy-service .hy-detail .box .imgList li img{ width:150px;}

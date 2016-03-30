@@ -1,0 +1,170 @@
+package com.mvc.home.web;
+
+import java.io.IOException;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.mvc.HYConstants;
+import com.mvc.business.model.Standard;
+import com.mvc.business.service.StandardCategoryManager;
+import com.mvc.business.service.StandardManager;
+import com.mvc.framework.model.Dictionary;
+import com.mvc.framework.service.DictionaryFacade;
+import com.mvc.framework.util.LocaleUtils;
+import com.mvc.framework.util.MessageUtils;
+import com.mvc.member.model.Company;
+import com.mvc.member.service.CompanyManager;
+import com.mvc.member.service.FavoritesManager;
+import com.mvc.member.service.HistoryManager;
+import com.mvc.product.model.Attribute;
+import com.mvc.product.model.AttributeVal;
+import com.mvc.product.model.Product;
+import com.mvc.product.model.ProductAttached;
+import com.mvc.product.model.ProductAttribute;
+import com.mvc.product.model.ProductMedia;
+import com.mvc.product.model.Sku;
+import com.mvc.product.service.AttributeManager;
+import com.mvc.product.service.AttributeValManager;
+import com.mvc.product.service.ProductAttachedManager;
+import com.mvc.product.service.ProductAttributeManager;
+import com.mvc.product.service.ProductManager;
+import com.mvc.product.service.ProductMediaManager;
+import com.mvc.product.service.SkuManager;
+import com.mvc.util.I18NUtils;
+
+@Controller
+@RequestMapping("/home/product")
+public class HomeProductController {
+	@Autowired
+    private CompanyManager companyManager;
+	@Autowired
+	private FavoritesManager favoritesManager;
+    @Autowired
+    private ProductManager productManager;
+    @Autowired
+    private SkuManager skuManager;
+    @Autowired
+	private HistoryManager historyManager;
+    @Autowired
+    private ProductMediaManager productMediaManager;
+    @Autowired
+    private ProductAttachedManager productAttachedManager;
+    @Autowired
+    private ProductAttributeManager productAttributeManager;
+    @Autowired
+    private AttributeManager attributeManager;
+    @Autowired
+    private AttributeValManager attributeValManager;
+    @Autowired
+    private DictionaryFacade dictionaryFacade;
+    @Autowired
+    private StandardManager standardManager;
+    @Autowired
+    private StandardCategoryManager standardCategoryManager;
+    @RequestMapping("/detail/{productId}")
+    public String productDetail(HttpServletRequest request, HttpServletResponse response,@PathVariable Long productId) {
+        Product product = productManager.getByObjectId(productId);
+      //通过productId查询sku
+        List<Sku> skus = skuManager.getByProductId(productId);
+        if(product==null||skus.size()==0){
+            try {
+                response.getWriter().write("产品不存在！");
+                return null;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        Long memberId = (Long) request.getSession().getAttribute(HYConstants.MEMBER_ID);
+       // History h =historyManager.getByCompanyId(productId);
+		if(historyManager.checkHistoryExtensive(productId)==true){
+			historyManager.createVisitRecord(productId, 1, 0,  memberId);
+		}
+		else if(historyManager.checkHistoryExtensive(productId)==false&&historyManager.getByCompanyId(productId).getIsDelete()==0){
+			favoritesManager.executeAudit2(productId, 1);
+		}
+        //产品所属企业
+        if(product.getSupplierId()!=null){
+        	Company company=companyManager.getByObjectId(product.getSupplierId());
+        	//获取纯文本
+            companyManager.getTxtFromDesc(company, request);
+        	request.setAttribute("company", company);
+        }else{
+        	request.setAttribute("company", null);
+        }
+
+        Sku mainSku = null;
+        if(skus.size()==0){
+            //没有产品发现，抛出异常
+        }else if(skus.size()==1){
+            //显示一个sku，不聚合
+            mainSku = skus.get(0);
+        }else if(skus.size()>1){
+            //聚合展示sku
+        }
+        //产品细节图
+        List<ProductMedia> subpictures = productMediaManager.getByProductIdAndType(productId,ProductMedia.MEDIA_TYPE_PICTURE);
+        request.setAttribute("subpictures", subpictures);
+        //展示价格范围
+        product.setSellPrice(productManager.getSellPrice(productId, LocaleUtils.getLocale(request).getLanguage()));
+        //支付方式
+        List<ProductAttached> payments = productAttachedManager.getByProductIdAndType(productId, ProductAttached.TYPE_PAYMENT);
+        String paymentWay = "";
+        for(ProductAttached pa:payments){
+            Long dicValue = pa.getValue();
+            Dictionary d = dictionaryFacade.getDictionaryByDictionaryIdAndValue(1504, dicValue.intValue());
+            String str = MessageUtils.getMessage(d.getName(), request);
+            paymentWay = paymentWay +str+",";
+        }
+        if(payments.size()>0){
+            paymentWay = paymentWay.substring(0,paymentWay.length()-1);
+        }
+        //资质
+        List<ProductAttached> qualifications = productAttachedManager.getByProductIdAndType(productId, ProductAttached.TYPE_QUALIFICATION);
+        String qualification = "";
+        for(ProductAttached pa:qualifications){
+            Long dicValue = pa.getValue();
+            Dictionary d = dictionaryFacade.getDictionaryByDictionaryIdAndValue(1015, dicValue.intValue());
+            String str = MessageUtils.getMessage(d.getName(), request);
+            qualification = qualification +str+",";
+        }
+        if(qualifications.size()>0){
+            qualification = qualification.substring(0,qualification.length()-1);
+        }
+        request.setAttribute("paymentWay", paymentWay);
+        request.setAttribute("qualification", qualification);
+        //产品基本属性
+        List<ProductAttribute> productAttributes = productAttributeManager.getByProductId(productId);
+        for(ProductAttribute pa:productAttributes){
+            Attribute att = attributeManager.getByObjectId(pa.getAttributeId());
+            AttributeVal attV = attributeValManager.getByObjectId(pa.getAttributeValId());
+            pa.setAttributeName(I18NUtils.transform(att, "name", request));
+            if(attV==null){
+                pa.setAttributeValue(pa.getValue());
+            }else{
+                pa.setAttributeValue(I18NUtils.transform(attV, "name", request));
+            }
+        }
+        request.setAttribute("productAttributes", productAttributes);
+        //通分类的产品n个
+        List<Product> products = productManager.getByCategoryId(product.getCategoryId(),product.getObjectId(),LocaleUtils.getLocale(request),15);
+        for(Product p:products){
+            String sellPrice = productManager.getSellPrice(p.getObjectId(), LocaleUtils.getLocale(request).getLanguage());
+            p.setSellPrice(sellPrice);
+        }
+        //标准
+        List<Standard> standards = standardManager.getByCategoryId(product.getCategoryId());
+        I18NUtils.transform(standards, request);
+        request.setAttribute("product", product);
+        request.setAttribute("mainSku", mainSku);
+        request.setAttribute("products", products);
+        request.setAttribute("standards", standards);
+        return "home/productDetail";
+    }
+}

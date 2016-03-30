@@ -1,0 +1,53 @@
+/* 1. Miscellaneous */
+body {
+	padding-top: 50px;
+}
+
+#footer {
+	margin-top: 10px;
+	color: #000000;
+}
+
+div.divider {
+	height: 1px;
+	margin: 1px;
+	overflow: hidden;
+	background-color: #E5E5E5;
+	border-bottom: 1px solid #000000;
+}
+
+.content{
+	width:100%;
+	background:#fff;
+}
+
+.chart{
+	height: 450px;
+	padding-top: 10px;
+}
+
+.open .dropdown-menu{
+	left:auto;	
+}
+
+#header {
+margin: 0 0 10px;
+}
+
+#sidebar-left .submenu span{
+	padding-left: 10px;
+}
+
+.row {
+	margin-right: -15px;
+	margin-left: -15px;
+}
+
+#content .row:first-child {
+	margin-right: 0px;
+	margin-left: 0px;
+}
+
+#topimg{
+	display:none;
+}

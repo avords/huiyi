@@ -1,0 +1,55 @@
+#广告位
+INSERT INTO `b_advert` (`object_id`, `advert_name`, `position_code`, `url`, `picture_address`, `upload_date`, `upload_person_id`, `dispaly_order`, `advert_status`) VALUES (1, '11', 'home_banner', 'http://www.baidu.com', '/picture/image/2016/03/02/2016030215015400002.jpg', '2016-03-02 15:08:37', 0, 1, 5);
+
+
+#国际化
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (21, 'btn_inquiry', 'Inquiry');
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (21, 'btn_main_buyer_center', 'For Buyers');
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (21, 'btn_main_login', 'Sign In');
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (21, 'btn_main_loginout', 'Login Out');
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (21, 'btn_main_register', 'Join Freee');
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (21, 'btn_main_supplier_center', 'For Suppliers');
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (21, 'btn_search', 'SEARCH');
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (21, 'common.base.success', 'Success');
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (21, 'front_main_btn_register', 'Join Freee');
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (21, 'front_main_page', 'Classic ');
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (21, 'label_product', 'Products');
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (21, 'label_service_for_buyer', 'Sourcing');
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (21, 'label_service_for_supplier', '优化推广en');
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (21, 'label_supplier', 'Suppliers');
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (21, 'label_welcome_to_huiyi', 'Welcome');
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (21, 'lable_home_look_for', 'What are you looking for...');
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (21, 'menu_home', 'Home');
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (21, 'menu_inquiry_list', 'Inquiry List');
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (21, 'menu_platform_service', 'Platform Service');
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (21, 'menu_product_directory', 'Product Directory');
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (21, 'menu_service_directory', 'Service Directory');
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (21, 'menu_technique_article', 'Technique Articles');
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (21, 'page_home', 'Home');
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (21, 'page_main', 'Classic ');
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (21, 'system_name', 'HuiYi');
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (22, 'btn_inquiry', '发布询盘');
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (22, 'btn_main_buyer_center', '买家中心');
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (22, 'btn_main_login', '登录');
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (22, 'btn_main_loginout', '退出');
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (22, 'btn_main_register', '注册');
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (22, 'btn_main_supplier_center', '卖家中心');
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (22, 'btn_search', '搜索');
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (22, 'common.base.success', '操作成功');
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (22, 'front_main_btn_register', '注册');
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (22, 'front_main_page', '经典首页');
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (22, 'label_product', '产品');
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (22, 'label_service_for_buyer', '优化采购');
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (22, 'label_service_for_supplier', '优化推广');
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (22, 'label_supplier', '供应商');
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (22, 'label_welcome_to_huiyi', '欢迎来到汇医网！');
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (22, 'lable_home_look_for', '请输入搜索条件');
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (22, 'menu_home', '首页');
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (22, 'menu_inquiry_list', '询盘列表');
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (22, 'menu_platform_service', '汇医服务');
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (22, 'menu_product_directory', '产品目录');
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (22, 'menu_service_directory', '服务目录');
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (22, 'menu_technique_article', '技术知识');
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (22, 'page_home', '简版首页');
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (22, 'page_main', '经典首页');
+INSERT INTO `f_message_property` (`language_id`, `message_key`, `message_value`) VALUES (22, 'system_name', '汇医网');

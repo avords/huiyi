@@ -1,0 +1,8 @@
+.index-body label{
+  font-size: 14px;
+  font-weight: 700;
+ }
+ .index-body a{
+  cursor: pointer;
+  color: blue;
+ }

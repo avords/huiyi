@@ -1,0 +1,108 @@
+package com.mvc.business.web;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.mvc.business.model.MallCategory;
+import com.mvc.business.model.MallCategoryMapping;
+import com.mvc.business.service.MallCategoryManager;
+import com.mvc.business.service.MallCategoryMappingManager;
+import com.mvc.framework.service.PageManager;
+import com.mvc.framework.web.PageController;
+import com.mvc.product.model.Category;
+import com.mvc.product.service.CategoryManager;
+
+@Controller
+@RequestMapping("/admin/mallCategory")
+public class MallCategoryController extends PageController<MallCategory>{
+
+		@Autowired
+		private MallCategoryManager mallCategoryManager;
+		
+		@Autowired
+		private MallCategoryMappingManager mallCategoryMappingManager;
+		
+		@Autowired
+		private CategoryManager categoryManager;
+
+		
+		@RequestMapping(value = "/configMapping/{objectId}")
+		public String configMapping(HttpServletRequest request, @PathVariable Long objectId) throws Exception {
+			MallCategory mallCategory = mallCategoryManager.getByObjectId(objectId);
+			// 根据标准id获得该id下面的已存在产品分类id
+			List< MallCategoryMapping> selected = mallCategoryMappingManager.getMallCategoryMappingByMallCategoryId(objectId);
+			// 所有产品二级目录，用来增加
+			List<Category> categories = categoryManager.getAllValidByType(Category.TYPE_COMMON_PRODUCT);
+			List<Category> seconds = new ArrayList<Category>();
+			for (Category ca : categories) {
+				if(ca.getLayer() == 2){//第二级
+					Category parentCate = getByParentId(categories, ca.getParentId());
+					if (parentCate != null) {
+						ca.setNameZh(parentCate.getNameZh() + " > " + ca.getNameZh());
+					}
+					ca.setStatus(0);//未选择
+					for(MallCategoryMapping standardCategory : selected){
+						if(standardCategory.getCategoryId().equals(ca.getObjectId())){
+							ca.setStatus(1);//已选择
+						}
+					}
+					seconds.add(ca);
+				}
+			}
+			request.setAttribute("mallCategory", mallCategory);
+			request.setAttribute("categories", seconds);
+			return getFileBasePath() + "configMapping";
+		}
+		
+		private Category getByParentId(List<Category> categories, long parentId){
+			for(Category category : categories){
+				if(category.getObjectId()==parentId){
+					return category; 
+				}
+			}
+			return null;
+		}
+		
+		@RequestMapping("/saveMapping/{objectId}")
+		public String saveMapping(HttpServletRequest request, @PathVariable Long objectId) throws Exception {
+			String[] categoryIds = request.getParameterValues("categoryId");
+			mallCategoryMappingManager.save(objectId,categoryIds);
+			request.setAttribute("message", "操作成功!");
+			return "redirect:../configMapping/" + objectId + getMessage("common.base.success", request)
+			+ "&" + appendAjaxParameter(request) + "&action=" + request.getParameter("action");
+		}
+		
+		@RequestMapping(value = "/saveSortNos")
+	    @ResponseBody
+	    public String saveSortNos(HttpServletRequest request, String ids,String sortNos) throws Exception {
+	        boolean result = false;
+	        if(StringUtils.isNotBlank(ids) && StringUtils.isNotBlank(sortNos)){
+	            mallCategoryManager.updateSortNoByObjectId(ids, sortNos);
+	            result = true;
+	        }
+	        return String.valueOf(result);
+	    }
+
+		
+		
+		@Override
+		public PageManager<MallCategory> getEntityManager() {
+			return mallCategoryManager;
+		}
+
+		@Override
+		public String getFileBasePath() {
+			return "business/";
+		}
+		
+		
+}

@@ -1,0 +1,113 @@
+<%@ page language="java" contentType="text/html; charset=utf-8"
+    pageEncoding="utf-8"%>
+<%@ include file="../common/taglibs.jsp"%>
+<!DOCTYPE html>
+<html>
+<head>
+<title><jdf:message code="menu_my_quotation"/></title>
+<meta charset="utf-8">
+<link rel="stylesheet" href="${dynamicDomain}/static/assets/css/member.css">
+<jdf:themeFile file="jquery.SuperSlide.2.1.1.js" />
+<jdf:themeFile file="jquery.twbsPagination.js" />
+<jdf:themeFile file="My97DatePicker/WdatePicker.js" />
+<jdf:themeFile file="css/colorbox.css" />
+<jdf:themeFile file="jquery.colorbox.min.js" />
+</head>
+<body>
+<div class="container member">
+    <%@ include file="common/member_seller_left.jsp"%>
+	<div class="merberBody">
+      <div class="tag-box tag-box-v3 form-page"> 
+        <div class="headline">
+          <h3><jdf:message code="menu_my_quotation"/></h3>
+        </div>
+        <div class="row margin-bottom-10">
+          <div class="col-md-12">
+            <form class="form-horizontal" action="${dynamicDomain}/member/myQuotation" method="post" role="form">
+              <div class="row">
+				<div class="col-sm-5 col-md-5">
+	              <div class="form-group">
+	                <label for="status" class="col-md-4 control-label"><jdf:message code="label_inquiry_product_name"/>：</label>
+	                <div class="col-md-8">
+	                	<input type="text" class="form-control" id="searchText" name="searchText" value="${searchText }" >
+	                </div>
+	              </div>
+	          	</div>
+	          <div class="col-sm-7 col-md-7">
+	              <div class="form-group">
+	                <label for="inputEmail1" class="col-md-3 control-label"><jdf:message code="label_send_time"/>：</label>
+	                <div class="col-md-9">
+	                	<input value="<fmt:formatDate value="${startDate }" pattern="yyyy-MM-dd HH:mm:ss"/>" type="text" style="width:170px;height:33px;" id="startDate" name="startDate" size="14" class="Wdate" onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',maxDate:'#F{$dp.$D(\'endDate\')}',readOnly:true})">~ 
+	                    <input value="<fmt:formatDate value="${endDate }" pattern="yyyy-MM-dd HH:mm:ss"/>" type="text" style="width:170px;height:33px;" id="endDate" name="endDate" size="14" class="Wdate" onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'#F{$dp.$D(\'startDate\')}',readOnly:true})">
+	                </div>
+	              </div>
+	          	</div>
+	          </div>    
+              <div class="row">
+		          <div class="col-md-12 margin-bottom-10" style="text-align:right;">
+		          	<button type="button" class="btn-u btn-u-blue btn-u-sm" style="width:80px;" onclick="clearForm1()"><jdf:message code="common.button.clear" /></button>
+		            <button class="btn-u btn-u-blue btn-u-sm" type="submit" style="width:80px;"><jdf:message code="common.button.query" /></button>
+		           </div>
+            </form>
+          </div>
+        </div>
+          <div class="col-md-12">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th><jdf:message code="table_top_no"/></th>
+                  <th><jdf:message code="quotation_to_company_name"/></th>
+                  <th><jdf:message code="label_inquiry_product_name"/></th>
+                  <th><jdf:message code="label_send_time"/></th>
+                  <th style="width:50px;"><jdf:message code="table_top_operation"/></th>
+                </tr>
+              </thead>
+              <tbody>
+              	<c:forEach items="${pageSearch.list}" var="asl" varStatus="vs">
+				  <tr>
+	                  <td>${vs.count }</td>
+	                  <td>${asl.toCompanyName }</td>
+	                  <td>${asl.productName }</td>
+	                  <td><fmt:formatDate value="${asl.sendDate}" pattern="yyyy-MM-dd HH:mm:ss" /></td>
+	                  <td><a href="${dynamicDomain}/member/deleteQuotation/${asl.objectId}" class="color-orange"><jdf:message code="common.button.delete"/></a></td>
+                  </tr>
+			     </c:forEach>
+              </tbody>
+            </table>
+          </div>
+          <div class="col-md-12 text-center">
+            <!-- 分页 -->
+	          <div class="Pagination" id="pagination" >
+				  <div class="page_numbers"></div>
+			  </div>
+			<!--/ 分页 -->
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+<script type="text/javascript">
+$(function(){
+	$(".colorbox-large").colorbox({ width: "80%", height:"80%", close: "关闭", overlayClose: false});
+	$('#myQuotation').addClass("active");
+	if('${pageSearch.totalPage != 0}'){
+        $("#pagination").twbsPagination({
+              totalPages: ${pageSearch.totalPage},
+              visiblePages:5,
+              startPage: ${pageSearch.currentPage},
+              onPageClick: function (event, page) {
+                $('#page-content').text('Page ' + page);
+                window.location.href = "${dynamicDomain}/member/myQuotation?ec_p="+page;
+           }
+        });
+	}
+});
+
+function clearForm1(){
+	$('#searchText').val("");
+	$('#startDate').val("");
+	$('#endDate').val("");
+}
+</script> 
+</body>
+</html>

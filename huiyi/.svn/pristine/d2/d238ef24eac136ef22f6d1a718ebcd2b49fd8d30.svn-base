@@ -1,0 +1,15 @@
+/*Registration and Login Page v1
+------------------------------------*/
+.reg-page { color: #555; padding: 30px; background: #fefefe; border: solid 1px #eee; box-shadow: 0 0 3px #eee; }
+/*Reg Header*/
+.reg-header { color: #555; margin-bottom: 35px; border-bottom: solid 1px #ddd; }
+.reg-header h2 { font-size: 20px; margin-bottom: 15px; color: #3773b5; }
+.reg-header h2 span { float: right; font-size: 14px; color: #777; margin-bottom: 15px; }
+/*Reg Forms*/
+.reg-page label { color: #777; }
+.input-group-addon.yz { padding: 0; }
+.input-group-addon.yz img { height: 32px; }
+.login_bg { margin-bottom: 30px; background: url(../../../assets/img/login_bg.png) no-repeat; background-size: 100% 100%; border-top: 2px solid #70a1d5; }
+.reg_bg { margin-bottom: 30px; background:#f2fcff; border-top: 2px solid #70a1d5; }
+/*Copyright*/
+.login .footer-v1 .copyright { background: #fff; }

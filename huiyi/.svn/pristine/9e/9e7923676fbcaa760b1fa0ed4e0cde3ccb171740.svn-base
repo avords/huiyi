@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+                     http://www.springframework.org/schema/beans/spring-beans.xsd
+                     http://www.springframework.org/schema/tx
+                     http://www.springframework.org/schema/tx/spring-tx.xsd
+                     http://www.springframework.org/schema/aop
+                     http://www.springframework.org/schema/aop/spring-aop.xsd
+                     http://www.springframework.org/schema/context
+                     http://www.springframework.org/schema/context/spring-context.xsd
+                     http://www.springframework.org/schema/util
+                     http://www.springframework.org/schema/util/spring-uti.xsd">
+
+	<bean class="org.springframework.context.support.ReloadableResourceBundleMessageSource"
+		id="messageSource" p:basenames="classpath:messages"
+		p:fallbackToSystemLocale="false" />
+
+	<bean class="com.mvc.config.ApplicationConfig">
+	    <property name="imageUploadFolder" value="${imageUploadFolder}"/>
+	    <property name="mailFrom" value="${mail.username}"/>
+	    <property name="reportHost" value="${reportHost}"/>
+	    <property name="nodeId" value="${nodeId}"/>
+	    <property name="nodePassword" value="nodePassword"/>
+	    <property name="basePath" value="${basePath}"/>
+	    <property name="imageFile" value="${imageFile}"/>
+	    <property name="productFile" value="${productFile}"/>
+	    <property name="dynamicDomain" value="${dynamicDomain}"/>
+	</bean>
+	<bean class="com.mvc.search.config.SearchConfig">
+        <property name="httpUrl" value="${solr.http.url}"/>
+        <property name="productCore" value="${solr.product.core}"/>
+        <property name="companyCore" value="${solr.company.core}"/>
+    </bean>
+	<!-- freemarker configuration -->
+	<bean id="freemarkerConfiguration"
+		class="org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean">
+		<property name="preferFileSystemAccess" value="false" />
+		<property name="freemarkerSettings">
+			<props>
+				<prop key="localized_lookup">false</prop>
+				<prop key="template_update_delay">5</prop>
+				<prop key="cache_storage">strong:20, soft:20</prop>
+				<prop key="url_escaping_charset">UTF-8</prop>
+				<prop key="output_encoding">UTF-8</prop>
+			</props>
+		</property>
+		<property name="templateLoaderPath" value="classpath:/templates/" />
+		<property name="defaultEncoding" value="UTF-8" />
+	</bean>
+	
+	<bean id="javaMailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+        <property name="host" value="${mail.smtp.host}" />
+        <property name="username" value="${mail.smtp.username}" />
+        <property name="password" value="${mail.smtp.password}" />
+        <property name="javaMailProperties">
+            <props>
+                <prop key="mail.smtp.port">${mail.smtp.port}</prop>
+                <prop key="mail.smtp.auth">${mail.smtp.auth}</prop>
+                <prop key="mail.smtp.timeout">${mail.smtp.timeout}</prop>
+            </props>
+        </property>
+    </bean>
+    
+	<bean class="com.mvc.framework.taglib.AreaSelectTag">
+		<property name="areaManager" ref="areaManager" />
+	</bean>
+	<bean class="com.mvc.framework.taglib.RadioTag">
+        <property name="dictionaryFacade" ref="dictionaryFacade" />
+    </bean>
+    <bean class="com.mvc.framework.taglib.CheckBoxTag">
+        <property name="dictionaryFacade" ref="dictionaryFacade" />
+    </bean>
+	
+	
+	<bean id="validator"
+		class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+		<property name="providerClass" value="org.hibernate.validator.HibernateValidator" />
+		<!-- 如果不加默认到 使用classpath下的 ValidationMessages.properties -->
+		<property name="validationMessageSource" ref="messageSource" />
+	</bean>
+	<!-- 所有业务类配置开始 -->
+
+	<context:component-scan base-package="com.mvc">
+		<context:exclude-filter type="annotation"
+			expression="org.springframework.stereotype.Controller" />
+	</context:component-scan>
+	
+	<bean id="authorizationManager" class="com.mvc.security.service.AuthorizationManagerImpl">
+		<property name="userManager" ref="userManager" />
+	</bean>
+	<!-- 所有业务类配置结束 -->
+	<!-- 业务类AOP配置开始 -->
+	<aop:config proxy-target-class="true">
+
+		<aop:advisor pointcut="execution(* com..*.service.*Manager*+.*(..)) and !execution(* com.mvc.base.service.*Manager*+.*(..))" advice-ref="txAdvice" order="1" />
+		<aop:advisor pointcut="execution(* com..*.service.*Manager*+.getByObjectId(..))" advice-ref="methodCacheInterceptor" order="1" />
+		<aop:advisor pointcut="execution(* com..*.service.*Manager*+.save*(..))" advice-ref="objectUpdateInterceptor" order="1" />
+		<aop:advisor pointcut="execution(* com..*.service.*Manager*+.delete*(..))" advice-ref="objectUpdateInterceptor" order="1" />
+		<aop:advisor pointcut="execution(* com..*.service.*Manager*.getAll(..))" advice-ref="methodCacheInterceptor" order="1" />
+		<aop:advisor pointcut="execution(* com..*.service.*Manager*+.save*(..))" advice-ref="getAllUpdateInterceptor" order="1" />
+		<aop:advisor pointcut="execution(* com..*.service.*Manager*+.delete*(..))" advice-ref="getAllUpdateInterceptor" order="1" />
+		<aop:advisor pointcut="execution(* com.mvc.report.service.ChartDataManager.search*(..))" advice-ref="methodCacheInterceptor" order="1" />
+	</aop:config>
+	<!-- 业务类AOP配置结束 -->
+</beans>

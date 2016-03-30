@@ -1,0 +1,25 @@
+#cookie save path
+cookiePath = /
+#domain
+cookieDomain = 42.121.129.85
+cookieWebDomain=42.121.129.85
+#root url
+rootUrl=http://42.121.129.85
+#login base  url
+loginUrl = /login/in
+#portal application name
+portalServerName = /
+#permission refresh time
+refreshPermissionTime = 30
+#session id prefix
+sessionName = sid
+#validation code
+validateCode = 123
+#to enable single login for account
+singleLogin=false
+
+# the waiting time after error login
+loginErrorWaitTime=5
+
+#Access control for all URL:deny|allow, default is allow
+accessControlAll=allow

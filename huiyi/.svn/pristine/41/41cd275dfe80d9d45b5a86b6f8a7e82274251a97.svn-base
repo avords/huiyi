@@ -1,0 +1,137 @@
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ include file="../common/taglibs.jsp"%>
+<!DOCTYPE html>
+<html>
+<head>
+<title>展会编辑</title>
+<meta charset="utf-8">
+<link rel="stylesheet" href="${dynamicDomain}/static/assets/css/member.css">
+<jdf:themeFile file="My97DatePicker/WdatePicker.js" />
+<jdf:themeFile file="jquery.validate.min.js" />
+<jdf:themeFile file="jquery.validate_zh.js" />
+<style type="text/css">
+span.error {
+  font-weight: bold;
+  color: #B94A48;
+  margin-top: 2px;
+}
+</style>
+</head>
+<body>
+<div class="container member">
+    <%@ include file="common/member_seller_left.jsp"%>
+	<div class="merberBody">
+	<div class="tag-box tag-box-v3 form-page"> 
+        <!--Inputs-->
+        <div class="headline">
+          <h3>展会编辑</h3>
+          <div class="pull-right" id="cd">
+				<a  href="${dynamicDomain}/member/modifyExhibition"  class="btn-u btn-u-blue btn-u-sm">返回</a>
+			</div>
+        </div>
+		<div class="panel-body">
+			<jdf:form bean="entity" scope="request">
+				<form method="post" action="${dynamicDomain}/member/saveExhibition" class="form-horizontal" id="editForm">
+					<c:if test="${message=='success'}">
+			        	<div class="span12 alert alert-info" id="messageBox">
+							<jdf:message code="common.base.success" />
+						</div>
+			    	</c:if>
+					<input type="hidden" name="objectId" id="objectId" value="${entity.objectId }">
+					<div class="row">
+						<div class="col-sm-7 col-md-7">
+							<div class="form-group">
+								<label for="" class="col-sm-2 control-label">展会时间</label>
+								<div class="col-sm-10">
+                                   <input value="<fmt:formatDate value="${entity.startDate}" pattern="yyyy-MM-dd HH:mm:ss"/>" type="text" style="width:150px;height:33px;" id="startDate" name="startDate" size="14" class="required Wdate" onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',maxDate:'#F{$dp.$D(\'endDate\')}',readOnly:true})">~ 
+                                   <input value="<fmt:formatDate value="${entity.endDate}" pattern="yyyy-MM-dd HH:mm:ss"/>" type="text" style="width:150px;height:33px;" id="endDate" name="endDate" size="14" class="required Wdate" onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'#F{$dp.$D(\'startDate\')}',readOnly:true})"> 
+                                </div>
+							</div>
+						</div>
+						<div class="col-sm-5 col-md-5">
+							<div class="form-group">
+								<label for="attendDate" class="col-sm-2 control-label">展位号</label>
+								<div class="col-sm-10">
+									<input type="text" class="required form-control" maxlength="16" id="boothNo" name="boothNo">
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="tab-v1 margin-bottom-40">
+			          <ul class="nav nav-tabs">
+			            <li class="active"><a href="#button-1" data-toggle="tab" aria-expanded="true">中文</a></li>
+			            <li class=""><a href="#button-2" data-toggle="tab" aria-expanded="false">English</a></li>
+			          </ul>
+			          <div class="tab-content" style="border:1px solid #ddd; padding:20px;">
+			            <div class="tab-pane fade active in" id="button-1">
+			              <div class="clearfix margin-bottom-10"></div>
+									<div class="row">
+										<div class="col-sm-12 col-md-12">
+											<div class="form-group">
+												<label for="nameZh" class="col-sm-2 control-label">展会名称:</label>
+												<div class="col-sm-10">
+													<input type="text" class="required form-control" maxlength="32" id="nameZh" name="nameZh">
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-sm-12 col-md-12">
+											<div class="form-group">
+												<label for="addressZh" class="col-sm-2 control-label">展会地址:</label>
+													<div class="col-sm-10">
+														<input type="text" class="form-control" maxlength="64" id="addressZh" name="addressZh">
+													</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="tab-pane fade" id="button-2">
+             						<div class="clearfix margin-bottom-10"></div>
+									<div class="row">
+										<div class="col-sm-12 col-md-12">
+											<div class="form-group">
+												<label for="nameEn" class="col-sm-3 control-label">Exhibition Name:</label>
+												<div class="col-sm-9">
+													<input type="text" class="required form-control" maxlength="64" id="nameEn" name="nameEn">
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-sm-12 col-md-12">
+											<div class="form-group">
+												<label for="addressEn" class="col-sm-3 control-label">Exhibition Address:</label>
+													<div class="col-sm-9">
+														<input type="text" class="form-control" maxlength="128" id="addressEn" name="addressEn">
+													</div>
+											</div>
+										</div>
+									</div>
+								</div>	
+		    				</div>
+						</div>
+						<c:if test="${message!='success'}">
+							<div class="row">
+								<div class="col-sm-12 col-md-6">
+									<div class="pull-right">
+										<button  type="submit" class="btn btn-success">
+												<span class="glyphicon glyphicon-ok"></span><jdf:message code="common.button.save"/>
+										</button>
+									</div>
+								</div>
+							</div>
+						</c:if>	
+				</form>
+			</jdf:form>
+		</div>
+	</div>
+	</div>
+</div>	
+<script type="text/javascript">
+$(function() {
+	$('#editForm').validate();
+});
+</script>	
+</body>
+</html>

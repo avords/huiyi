@@ -1,0 +1,98 @@
+/* === 会员中心 === */
+
+.row { margin-left: -10px; margin-right: -10px; }
+.col-lg-1, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-md-1, .col-md-10, .col-md-11, .col-md-12, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-sm-1, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-xs-1, .col-xs-10, .col-xs-11, .col-xs-12, .col-xs-2, .col-xs-3, .col-xs-4, .col-xs-5, .col-xs-6, .col-xs-7, .col-xs-8, .col-xs-9 { padding-left: 10px; padding-right: 10px; }
+.member { padding: 20px 0; }
+.borderNone { border: none!important; }
+
+.merberH1{ font-size:22px; text-align:center; color:#4765a0; margin-bottom:20px;}
+.member table{ font-size:12px;}
+
+/* 菜单 */
+
+.merberNav h2 { background: #6499d2 none repeat scroll 0 0; color: #fff; font-size: 14px; padding: 2px 20px 2px 35px; }
+.merberNav { float: left; width: 200px; }
+.merberNav-box { border: 1px solid #ddd; padding-bottom: 100px; }
+.subNav h3 { font-size: 13px; font-weight: normal; color: #3366ad; border-bottom: 1px solid #ddd; }
+.subNav h3 a { padding: 4px 10px 4px 15px; display: block; color: #3366ad; background: #f6fbfe; }
+.subNav h3 a:hover { color: #f30; background: #fefbf6; text-decoration: none; }
+.subNav h3 a i { float: left; font-size: 18px; color: #9fbbe2; display: inline-block; width: 16px; height: 16px; margin: 6px 10px 0 0; transition: all .3s; }
+.subNav h3 a:hover i { color: #f67a54; }
+.subNav ul { padding: 10px 0; border-bottom: 1px solid #ddd; }
+.subNav ul li { padding-left: 20px; font-size: 13px; }
+.subNav ul li a { padding-left: 20px; color: #777; display: block; border-radius: 12px 0 0 12px; text-decoration: none; }
+.subNav ul li a:hover { background: #8ab7e7; color: #fff; }
+.subNav ul li a:hover, .subNav ul li a.active { background: #8ab7e7; color: #fff; }
+.merberBody { float: left; margin-left: 20px; width: 920px; }
+.ind-info { padding: 20px 25px; margin-bottom: 20px; border: 1px solid #ddd; background: #f9f9f9; }
+.ind-info dl { height: 62px; border-bottom: 1px solid #eee; }
+.ind-info dd .cont1 { padding: 6px 0; color: #666; }
+.ind-info dd .cont2 { color: #666; }
+.ind-info dd .cont2 span { padding-right: 30px; line-height: 24px; }
+.ind-info dd .cont2 span img { padding-right: 6px; margin-top: -2px; }
+.ind-info .avatar { float: left; margin-right: 20px; }
+.ind-info .avatar img { width: 60px; height: 60px; border-radius: 50%; border: 1px solid #ccc; }
+.ind-box { margin-bottom: 20px; border: 1px solid #ddd; background: #fff; }
+.ind-box .title { height: 36px; margin-bottom: 10px; border-bottom: 1px solid #ddd; font-size: 14px; background: #f9f9f9; }
+.ind-box .title h3 { padding: 4px 0 0 20px; color: #333; float: left; font-size: 14px; }
+.ind-box .title span { float: right; font-size: 12px; line-height: 34px; padding-right: 15px; }
+.ind-box .cont { min-height: 200px; }
+.ind-box .cont ul li { padding-left:10px; font-size: 14px; line-height: 40px; border-bottom: 1px solid #ddd; background: url(../img/dian.jpg) 5px center no-repeat; }
+.ind-box .cont ul li a { padding: 4px 0 4px 15px; display: block; font-size: 13px; width:80%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;text-decoration: none; }
+.ind-box .cont ul li:last-child { border-bottom: none; }
+.ind-box .cont ul li span { float: right; font-size: 12px; color: #999; margin-right:10px; }
+.ind-box .cont .red { color: #f30; }
+/* 会员中心-企业信息维护 */
+.form-page input, .form-page select { margin-bottom: 0px; }
+.form-group img { border: 1px solid #ccc; padding: 5px; }
+.img_position { position: relative; }
+.img_position img { width: 120px; }
+.img_position i { position: absolute; top: 3px; right: 3px; font-size: 20px; color: #999; cursor: pointer; }
+.img_position i:hover { color: #f60; }
+.member table { color: #666; }
+.member table input { margin-bottom: 0; margin-top: 6px; }
+.member th { background: #f9f9f9; }
+.member .fbTable { padding: 10px; }
+.member .inquire-text { width: 420px; }
+.member .inquire-text h4 { font-size: 14px; padding-bottom: 10px; }
+.member .inquire-text img { float: left; width: 80px; margin-right: 10px; }
+.member .inquire-text p { font-size: 12px; color: #999; padding-top: 5px; }
+.member td span.editor { padding-right: 16px; }
+
+/* ===== 会员中心-我的足迹 ===== */
+.member .history-pro .hd { margin-bottom: 15px; }
+.member .history-pro .hd span { padding: 0 10px; }
+.member .history-pro .hd a { text-decoration: none; }
+.member .history-pro .bd .checkbox { float: left; width: 50px; padding-left: 10px; padding-top: 5px; }
+.member .history-pro .bd .checkbox input { margin: 0; }
+.member .history-pro .bd .img { float: left; margin-right: 20px; }
+.member .history-pro .bd .img img { width: 80px; }
+.member .history-pro .bd .list { padding: 20px 0; border-top: 1px solid #ddd; }
+.member .history-pro .bd .text { float: left; width: 600px; }
+.member .history-pro .bd .text h3 { padding-bottom: 3px; font-size: 14px; }
+.member .history-pro .bd .other { margin-top: 10px; }
+.member .history-pro .bd .other h4 { position: relative; font-size: 12px; display: inline-block; padding: 2px 20px 2px 12px; background: #f6fbfe; text-decoration: none; cursor: pointer; }
+.member .history-pro .bd .other h4 i { margin: 0; position: absolute; top: 6px; right: 8px; }
+.member .history-pro .bd .other ul { display: none; background: #f6fbfe; overflow: hidden; }
+.member .history-pro .bd .other li { float: left; width: 128px; margin: 10px; text-align: center; }
+.member .history-pro .bd .other li img { width: 80px; }
+.member .history-pro .bd .other li img p { font-size: 12px; text-align: left; }
+.member .history-pro .bd .del { float: right; width: 90px; margin-left: 20px; }
+.member .history-pro .bd .del a { text-decoration: none; }
+.member .history-supplier .head { background: #f9f9f9; border: 1px solid #ddd; }
+.member .history-supplier .head span { padding: 0 10px; }
+.member .history-supplier .list { padding: 20px 10px; border-top: 1px solid #ddd; }
+.member .history-supplier .cont { float: left; width: 430px; }
+.member .history-supplier .cont h4 { font-size: 14px; padding-bottom: 5px; }
+.member .history-supplier .icon { margin-bottom: 10px; }
+.member .history-supplier .icon span { display: inline-block; padding-left: 22px; padding-right: 30px; }
+.member .history-supplier .icon span.icon-jp1 { background: url(../img/icon_jp_1.png) no-repeat left center; }
+.member .history-supplier .icon span.icon-yz1 { background: url(../img/icon_yz_1.png) no-repeat left center; }
+.member .history-supplier .cont p { margin-bottom: 5px; font-size: 12px; overflow: hidden; }
+.member .history-supplier .cont p i { width: 80px; font-style: normal; color: #999; float: left; display: inline-block; }
+.member .history-supplier .cont p span { float: right; width: 350px; display: inline-block; }
+.member .history-supplier .pic { float: right; width: 420px; }
+.member .history-supplier .pic li { float: left; width: 120px; margin: 0 10px; text-align: center; }
+.member .history-supplier li img { width: 120px; margin-bottom: 10px; border: 1px solid #ddd; }
+.member .history-supplier li img:hover { width: 120px; margin-bottom: 10px; border: 1px solid #f30; }
+.member .history-supplier li p { font-size: 12px; text-align: left; }

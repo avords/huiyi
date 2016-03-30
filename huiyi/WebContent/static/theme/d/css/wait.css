@@ -1,0 +1,32 @@
+.loading-indicator {
+	font-size: 12px;
+	background-image:url(img/loading.gif);
+    background-repeat: no-repeat;
+    background-position:top left;
+    padding-left:20px;
+	height:30px;
+	line-height:25px;
+	text-align:left;
+}
+
+#loading{
+	position:absolute;
+	left:45%;
+	top:40%;
+	border:3px solid #FC8F66;
+	background:white url(img/block-bg.gif) repeat-x;
+	padding:10px;
+	font:bold 14px verdana,tahoma,helvetica;
+	color:#003366;
+	width:180px;
+	text-align:center;
+}
+
+.hiddenIt{
+	display:none;
+	visibility:hidden;
+}
+.displayIt{
+	display:block;
+	visibility:visible;;
+}

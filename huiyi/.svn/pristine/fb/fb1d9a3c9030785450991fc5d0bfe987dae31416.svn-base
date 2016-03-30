@@ -1,0 +1,75 @@
+package com.mvc.base.service;
+
+import java.util.List;
+
+import org.hibernate.Query;
+import org.hibernate.SQLQuery;
+import org.springframework.stereotype.Service;
+
+import com.mvc.base.model.Message;
+import com.mvc.framework.dao.HibernateWebUtils;
+import com.mvc.framework.service.BaseService;
+import com.mvc.framework.util.PageSearch;
+import com.mvc.member.model.Exhibition;
+
+@Service
+public class MessageManager extends BaseService<Message, Long> {
+
+	public void searchMessageForBuyer(PageSearch page) {
+		Object[] params = HibernateWebUtils.getQueryParameter(page.getFilters());
+        String sql ="SELECT t1.title,t2.user_name,t3.name_zh,t1.content,t1.send_date,t1.is_see,t1.object_id,t3.name_en  "
+        		+" FROM t_message t1 "
+        		+" LEFT JOIN t_member t2 ON (t2.object_id=t1.from_user ) "
+        		+" LEFT JOIN t_company t3 ON (t3.object_id=t1.to_company) "
+        		+" WHERE 1=1 "; 
+        String whereSql = HibernateWebUtils.buildSql(page.getFilters());
+        if (0 == page.getTotalCount()){
+            String countSql = "select count(*) from (" + sql +whereSql+") a";
+            SQLQuery query = getSession().createSQLQuery(countSql);
+            HibernateWebUtils.setQueryParameter(query, params);
+            List<Long> count = query.list();
+            int total = count == null ? 0 : ((Number)count.get(0)).intValue();
+            page.setTotalCount(total);
+        }
+        String orderSql = " order by t1.is_see asc, t1.send_date desc";
+        SQLQuery query = getSession().createSQLQuery(sql+whereSql+orderSql);
+        HibernateWebUtils.setQueryParameter(query, params);
+        List<Object[]> items = query.setFirstResult(page.getBegin()).setMaxResults(page.getPageSize()).list();
+        page.setList(items);
+	}
+
+	public void searchMessageForSeller(PageSearch page) {
+		Object[] params = HibernateWebUtils.getQueryParameter(page.getFilters());
+        String sql ="SELECT t1.title,t2.user_name,t3.name_zh,t1.content,t1.send_date,t1.is_see,t1.object_id,t3.name_en  "
+        		+" FROM t_message t1 "
+        		+" LEFT JOIN t_member t2 ON (t2.object_id=t1.from_user ) "
+        		+" LEFT JOIN t_company t3 ON (t3.object_id=t1.from_company) "
+        		+" WHERE 1=1 "; 
+        String whereSql = HibernateWebUtils.buildSql(page.getFilters());
+        if (0 == page.getTotalCount()){
+            String countSql = "select count(*) from (" + sql +whereSql+") a";
+            SQLQuery query = getSession().createSQLQuery(countSql);
+            HibernateWebUtils.setQueryParameter(query, params);
+            List<Long> count = query.list();
+            int total = count == null ? 0 : ((Number)count.get(0)).intValue();
+            page.setTotalCount(total);
+        }
+        String orderSql = " order by t1.is_see asc, t1.send_date desc";
+        SQLQuery query = getSession().createSQLQuery(sql+whereSql+orderSql);
+        HibernateWebUtils.setQueryParameter(query, params);
+        List<Object[]> items = query.setFirstResult(page.getBegin()).setMaxResults(page.getPageSize()).list();
+        page.setList(items);
+	}
+	
+	/**
+	 * 会员中心显示的站内信未读
+	 */
+	@SuppressWarnings("unchecked")
+	public List<Message> getMessages(int size,Long companyId) {
+		String hql = "select A from " + Message.class.getName() +" A where A.toCompany =" +companyId+ " AND A.isSee=1 order by A.sendDate desc";
+		Query query = getSession().createQuery(hql);
+        query.setFirstResult(0);
+        query.setMaxResults(size);
+        return query.list();
+	}
+}

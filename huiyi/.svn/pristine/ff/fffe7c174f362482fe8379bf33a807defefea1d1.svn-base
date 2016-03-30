@@ -1,0 +1,141 @@
+/* 
+ * Author:  瀛旂淮濞�    
+ * Date:    2016-02-14
+ * Version: 浼佷笟鍟嗛摵妯″潡
+ */
+ 
+/* 鍏敤鏍囩 */
+.companyIndex .title { padding: 0 20px 0 0; overflow: hidden; clear: both; border-bottom: 1px solid #ddd; background: #f8f8f8; }
+.companyIndex .title h3 { float: left; font-size: 16px; padding: 2px 20px 2px; line-height: 32px; background: #5685C9; color: #fff; }
+.companyIndex .title h3 i { font-size: 16px; }
+.companyIndex .title h3 img { margin-top: -3px; margin-right: 5px; }
+.companyIndex .title span { margin-top: 8px; float: right; font-size: 12px; }
+/* 浼佷笟header  */
+.companyIndex .header_logo { height: 140px; border: 1px solid #ddd; margin-top: 20px; padding: 15px 20px; }
+.companyIndex .header_logo .news-pic { width: 80%; float: left; }
+.companyIndex .header_logo .news-pic img { float: left; margin-right: 20px; height: 110px; }
+.companyIndex .header_logo .news-pic dt { font-weight: normal; font-size: 20px; padding: 9px 0; }
+.companyIndex .header_logo .news-pic dt a { color: #333; }
+.companyIndex .header_logo .news-pic dd { line-height: 24px; color: #666; }
+.companyIndex .header_logo .group { width: 17%; float: right; height: 50px; border: 1px solid #ddd; margin-bottom: 11px; }
+.companyIndex .header_logo .group .group_img { width: 30%; line-height: 43px; vertical-align: middle; text-align: right; float: left; margin-right: 10px; }
+.companyIndex .header_logo .group .group_img img { height: 44px; }
+.companyIndex .header_logo .group .group_content { width: 60%; float: left; text-align: left; padding-top: 5px; }
+/* 瀵艰埅 */
+.navBg { background: #5685C9; margin-bottom: 20px; }
+.nav { height: 45px; line-height: 45px; margin: 0 auto; position: relative; z-index: 1; }
+.nav a { color: #fff; }
+.nav .nLi { float: left; position: relative; display: inline; border-right: 1px solid #3475b5; }
+.nav .nLi h3 { float: left; margin: 0; font-weight: normal; }
+.nav .nLi h3 i { position: absolute; top: 12px; right: 18px; height: 6px; }
+.nav .nLi h3 a { display: block; padding: 9px 40px 9px 30px; font-size: 15px; }
+.nav .sub { display: none; width: 100%; left: 0; top: 45px; position: absolute; background: #3C6EB6; line-height: 26px; padding-bottom: 5px; }
+.nav .sub li { zoom: 1; font-size: 13px; line-height: 32px; }
+.nav .sub a { display: block; padding-left: 30px; }
+.nav .sub a:hover { background: #5685C9; color: #fff; text-decoration: none; }
+.nav .on h3 a { background: #3C6EB6; color: #fff; text-decoration: none; }
+/* 鍏徃绠�粙 */
+.companyIndex .Introduce { margin-bottom: 20px; border: 1px solid #ddd; }
+.companyIndex .news { float: left; width: 868px; }
+.companyIndex .news .news-pic { padding: 20px; }
+.companyIndex .news .news-pic img { float: left; width: 280px; height: 180px; }
+.companyIndex .listinfo { float: right; width: 520px; }
+.companyIndex .listinfo li { clear: both; padding: 3px 0; }
+.companyIndex .listinfo li.border-dashed { border-bottom: 1px dashed #ccc; padding-bottom: 12px; margin-bottom: 12px; }
+.companyIndex .listinfo li label, .companyIndex .listinfo li span { font-size: 13px; color: #666; font-weight: normal; }
+.companyIndex .listinfo li label { float: left; width: 80px; color: #999; }
+.companyIndex .listinfo li span { }
+.companyIndex .news .news-pic p { clear: both; font-size: 13px; color: #666; line-height: 24px; padding-top: 15px; }
+/*鍏徃姒傚喌 */
+.companyIndex .brand { float: right; width: 300px; min-height: 350px; border-left: 1px solid #ddd; background: #f8f8f8; padding: 15px 10px; }
+.companyIndex .brand .tit { height: 70px; border-bottom: 1px dashed #5685C9; }
+.companyIndex .brand .tit h3 { height: 32px; color: #3c6eb6; font-size: 16px; text-align: center; }
+.companyIndex .brand .icon { margin-bottom: 10px; padding-left: 50px; }
+.companyIndex .brand .icon span { display: inline-block; width: 40%; padding-left: 22px; }
+.companyIndex .brand .icon span.icon-jp1 { background: url(../img/icon_jp_2.png) no-repeat left center; }
+.companyIndex .brand .icon span.icon-jp2 { background: url(../img/icon_jp_1.png) no-repeat left center; }
+.companyIndex .brand .icon span.icon-jp3 { background: url(../img/icon_jp_3.png) no-repeat left center; }
+.companyIndex .brand .icon span.icon-yz1 { background: url(../img/icon_yz_1.png) no-repeat left center; }
+.companyIndex .brand ul.state { border-bottom: 1px dashed #5685C9; padding: 0 15px; padding-bottom: 11px; margin: 11px 0; }
+.companyIndex .brand ul.enroll { padding: 0 15px; }
+.companyIndex .brand ul.state li label, .companyIndex .brand ul.state li span, .companyIndex .brand ul.enroll li label, .companyIndex .brand ul.enroll li span { font-size: 12px; color: #666; font-weight: normal; }
+/* 浜у搧鎺ㄨ崘 */
+.companyIndex .ourProduct { margin-bottom: 20px; border: 1px solid #ddd; }
+.companyIndex .ourProduct .title { }
+.companyIndex .ourProduct ul { }
+.companyIndex .ourProduct ul li { margin: 20px 0; float: left; text-align: center; width: 20%; border-right: 1px solid #ddd; }
+.companyIndex .ourProduct ul li a { display: block; text-decoration: none; }
+.companyIndex .ourProduct ul li a:hover img { opacity: .85; }
+.companyIndex .ourProduct ul li:last-child { border-right: none; }
+.companyIndex .ourProduct ul li .pic { height: 120px; margin-bottom: 30px; }
+.companyIndex .ourProduct ul li .pic img { width: 60%; }
+.companyIndex .ourProduct ul li p.color-red { font-size: 16px; color: #f30; }
+.companyIndex .ourProduct ul li a:hover p { color: #f30; }
+/* 鍙戦�绔欏唴娑堟伅 */
+.companyIndex .send { margin-bottom: 20px; border: 1px solid #ddd; }
+.companyIndex .send .title { }
+.companyIndex .send .title h3 { background: #f8f8f8; color: #5685C9; border-bottom: 2px solid #5685C9; }
+.companyIndex .send .content { height: 440px; padding: 40px 100px; }
+.companyIndex .send .content .news_content { border: 1px solid #ddd; background: #f8f8f8; min-height: 360px; padding: 40px 100px; }
+.companyIndex .send .content .news_group label { font-size: 13px; color: #666; font-weight: normal; margin-right: 16px; vertical-align: top; width: 92px; text-align: right; }
+.companyIndex .send .content .news_group label i { color: #E67E22; font-size: 1px; }
+.companyIndex .send .content .news_control { width: 653px; height: 40px; padding: 0 17px; margin-bottom: 20px; border: 1px solid #ddd; }
+.companyIndex .send .content .news_control_max { width: 653px; height: 180px; margin-bottom: 15px; padding: 7px 17px; border: 1px solid #ddd; }
+/* =======浜у搧椤佃鎯�=====  */
+
+/* 浜у搧浠嬬粛 */
+.product_introduce { width: 890px; float: left; padding-right: 30px; margin-bottom: 20px; }
+/* 浜у搧璇︽儏 */
+.product_detail { margin-bottom: 20px; }
+.product_detail .listinfo { float: right; width: 500px; min-height: 280px; border-bottom: 1px dashed #ccc; margin-bottom: 30px; padding-bottom: 30px; }
+.product_detail .listinfo h3 { font-size: 18px; margin: 20px 0; color: #3c6eb6 }
+.product_detail .listinfo li { clear: both; padding: 5px 0; }
+.product_detail .listinfo li label, .product_detail .listinfo li span { font-size: 14px; }
+.product_detail .listinfo li label { width: 100px; }
+/* 浜у搧鎻忚堪 */
+.product_describe { }
+.product_describe .slideTxtBox { width: 100%; text-align: left; }
+.product_describe .slideTxtBox .hd { height: 36px; background: #f8f8f8; padding: 0 10px 0 20px; border: 1px solid #ddd; position: relative; }
+.product_describe .slideTxtBox .hd ul { float: left; position: absolute; left: 0; }
+.product_describe .slideTxtBox .hd ul li { float: left; font-size: 15px; height: 34px; line-height: 32px; margin-right: 10px; padding: 0 20px; cursor: pointer; color: #333; }
+.product_describe .slideTxtBox .hd ul li.on { height: 34px; background: #5685C9; color: #fff; }
+.product_describe .slideTxtBox .bd .news-pic { padding: 0; }
+.product_describe .slideTxtBox .bd .pic { padding: 20px; border: 1px solid #ddd; border-top: 0; margin-bottom: 20px; }
+.product_describe .slideTxtBox .bd ul.pic_left { width: 49%; display: inline-block; }
+.product_describe .slideTxtBox .bd li { height: 30px; line-height: 30px; }
+.product_describe .slideTxtBox .bd li label, .product_describe .slideTxtBox .bd li span { font-size: 14px; }
+.product_describe .slideTxtBox .bd li label { width: 100px; font-weight: normal; color: #959595; }
+.product_describe .slideTxtBox .bd .product_img { width: 868px; padding: 20px; border: 1px solid #ddd; }
+.product_describe .slideTxtBox .bd .product_img img { display: block; width: 100%; height: 100%; margin: 0 auto; }
+/* 鐩稿叧浜у搧 */
+.product_relative { width: 280px; float: right; margin-bottom: 20px; }
+.companyIndex .standard, .relaProduct { margin-bottom: 20px; border: 1px solid #ddd; border-top: 2px solid #5685C9; }
+.companyIndex .standard .title h3, .relaProduct .title h3 { background: #f8f8f8; color: #5685C9; }
+.companyIndex .standard ul, .relaProduct ul { padding: 10px 20px; }
+.companyIndex .standard ul li label, .standard ul li span { font-size: 15px; }
+.companyIndex .standard ul li label { width: 100px; font-weight: normal; }
+.relaProduct ul { padding: 7px 15px; }
+.relaProduct .tc-bd li { clear: both; overflow: hidden; padding: 15px 0; border-bottom: 1px dashed #ddd; }
+.relaProduct .tc-bd li:last-child { border-bottom: none; }
+.relaProduct .tc-bd img { float: left; width: 60px; height: 60px; }
+.relaProduct .tc-bd dl { float: right; width: 165px; }
+.relaProduct .tc-bd dt { font-weight: normal; }
+.relaProduct .tc-bd dd { font-size: 16px; color: #f60; }
+/*鍥剧墖鏀惧ぇ闀滄牱寮�/
+.jqzoom { float: left; border: none; position: relative; padding: 0px; cursor: pointer; margin: 0px; display: block; }
+.jqzoom img { width: 320px; height: 320px; }
+.zoomdiv { z-index: 100; position: absolute; top: 0px; left: 0px; width: 320px; height: 320px; background: #ffffff; border: 1px solid #CCCCCC; display: none; text-align: center; overflow: hidden; }
+.zoomdiv img { min-width: 600px; min-height: 600px; }
+.jqZoomPup { z-index: 10; visibility: hidden; position: absolute; top: 0px; left: 0px; width: 120px!important; height: 120px!important; border: 1px solid #aaa; background: #ffffff /*url(../images/zoom.png) 50% center no-repeat*/; opacity: 0.5; -moz-opacity: 0.5; -khtml-opacity: 0.5; filter: alpha(Opacity=50); }
+/*鍥剧墖灏忓浘棰勮鍒楄〃*/
+.spec-preview { width: 320px; height: 320px; border: 1px solid #DFDFDF; overflow: hidden; }
+.spec-preview img { }
+.spec-scroll { clear: both; margin-top: 5px; width: 320px; }
+.spec-scroll .prev { float: left; margin-right: 4px; }
+.spec-scroll .next { float: right; }
+.spec-scroll .prev, .spec-scroll .next { display: block; font-family: "瀹嬩綋"; text-align: center; width: 10px; height: 50px; line-height: 50px; border: 1px solid #CCC; background: #EBEBEB; cursor: pointer; text-decoration: none; }
+.spec-scroll .items { float: left; position: relative; width: 292px; height: 50px; overflow: hidden; }
+.spec-scroll .items ul { position: absolute; width: 999999px; height: 50px; }
+.spec-scroll .items ul li { float: left; width: 58px; text-align: center; }
+.spec-scroll .items ul li img { border: 1px solid #CCC; padding: 2px; width: 50px; height: 50px; }
+.spec-scroll .items ul li img:hover { border: 2px solid #FF6600; padding: 1px; }

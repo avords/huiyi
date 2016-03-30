@@ -1,0 +1,21 @@
+<%@ page language="java" pageEncoding="UTF-8"%>
+<div class="footer-v1">
+	<div class="copyright">
+		<div class="container">
+			<div class="row">
+				<div class="col-xs-12 text-center">
+					<p>
+						<c:forEach items="${footChannels }" var="item" varStatus="status">
+					        <c:if test="${!status.first }"> | </c:if>
+					   		<a href="${dynamicDomain }/home/directDetail/${item.objectId}" target="_blank">${item.nameZh}</a>
+					   	</c:forEach>
+						<br> 汇医网 2015 © All Rights Reserved. 沪ICP备06024200号 沪ICP证B2-20130044号 沪公网安备 31010402000129号
+					</p>
+					<p>
+						<%-- <img src="${pageContext.request.contextPath}/static/assets/img/footer_img110.jpg" width="591" height="60"> --%>
+					</p>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

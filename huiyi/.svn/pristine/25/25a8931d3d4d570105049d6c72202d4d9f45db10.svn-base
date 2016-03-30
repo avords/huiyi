@@ -1,0 +1,320 @@
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ include file="../common/taglibs.jsp"%>
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9"> <![endif]-->
+<html>
+<head>
+<title>产品列表页</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="${dynamicDomain}/static/assets/css/list.css">
+<jdf:themeFile file="jquery.validate.min.js" />
+<jdf:themeFile file="jquery.validate_zh.js" />
+<jdf:themeFile file="jquery.twbsPagination.js" />
+<style type="text/css">
+    .pro-text p{
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width:90%;
+    }
+</style>
+</head>
+
+<body>
+<div class="wrapper">
+<!--   <div class="pro-wz"><a href="#">首页</a> &gt; <a href="#">手术设备</a> &gt; <a href="#">普通诊察器械</a> &gt; 产品列表</div> -->
+  <div class="container porList">
+    <div class="side">
+     <c:if test="${fn:length(page.data.categoryFacets)>0}">
+      <div class="category">
+        <div class="title">
+          <h2><jdf:message code="label_product_category" /></h2>
+        </div>
+        <div class="cont">
+          <c:forEach items="${page.data.categoryFacets }" var="item" varStatus="status">
+              <c:choose>
+                  <c:when test="${status.index==0 }">
+                      <div class="item on">
+		                <h3><a href="${dynamicDomain }/home/search?type=1&${urlParam}&data-value=${item.fieldName }:${item.fieldValue }">${item.name }(${item.count })</a></h3>
+		                <ul>
+		                  <c:forEach items="${item.subFacetResults }" var="sub" varStatus="sta">
+		                      <li><a class="hover" href="${dynamicDomain }/home/search?type=1&${urlParam}&data-value=${sub.fieldName }:${sub.fieldValue }">${sub.name }(${sub.count })</a></li>
+		                  </c:forEach>
+		                </ul>
+		              </div>
+                  </c:when>
+                  <c:otherwise>
+                      <div class="item">
+                        <h3><a href="${dynamicDomain }/home/search?type=1&${urlParam}&data-value=${item.fieldName }:${item.fieldValue }">${item.name }(${item.count })</a></h3>
+                        <ul>
+                          <c:forEach items="${item.subFacetResults }" var="sub" varStatus="sta">
+                              <li><a class="hover" href="${dynamicDomain }/home/search?type=1&${urlParam}&data-value=${sub.fieldName }:${sub.fieldValue }">${sub.name }(${sub.count })</a></li>
+                          </c:forEach>
+                        </ul>
+                      </div>
+                  </c:otherwise>
+              </c:choose>
+          </c:forEach>
+        </div>
+      </div>
+      </c:if>
+      <c:forEach items="${page.data.skuAttributeFacets }" var="item" varStatus="status">
+	      <div class="attribute">
+	        <h3><i class="fa fa-gg"></i>${item.name }</h3>
+	        <ul>
+	          <c:forEach items="${item.subFacetResults }" var="sub" varStatus="sta">
+		          <li class="checkbox">
+		            <label>
+		             <!--  <input type="checkbox"> -->
+		              <a href="${dynamicDomain }/home/search?type=1&${urlParam}&data-value=${sub.fieldName }:${sub.fieldValue }">${sub.name }(${sub.count })</a></label>
+		          </li>
+	          </c:forEach>
+	        </ul>
+	      </div>
+      </c:forEach>
+    </div>
+    <div class="main">
+     <form action="" id="conditionForm">
+      <div class="listTitle">
+        <div class="tit">
+          <h3><em><jdf:message code="label_product_list" /></em></h3>
+          <span><a class="btn btn-success btn-sm colorbox-large" href="${dynamicDomain}/home/servicesList/1?ajax=1"><jdf:message code="label_service_for_buyer"/></a></span></div>
+        <div class="cont clearfix">
+          <c:forEach items="${page.data.productAttributeFacets }" var="item" varStatus="status">
+	          <dl>
+	            <dt>${item.name }：</dt>
+	            <dd>
+	                <c:forEach items="${item.subFacetResults }" var="sub" varStatus="sta">
+	                    <a href="${dynamicDomain }/home/search?type=1&${urlParam}&data-value=${sub.fieldName }:${sub.fieldValue }">${sub.name }(${sub.count })</a>
+	                </c:forEach>
+	            </dd>
+	          </dl>
+          </c:forEach>
+          <dl>
+            <dt>会员类型：</dt>
+            <dd class="checkbox">
+            <c:forEach items="${memberLevels }" var="item" varStatus="status">
+            <a href="javascript:void(0);">
+              <label>
+                <input type="checkbox" name="member_level" value="${item.value }">
+              ${item.name }</label>
+              </a> 
+              </c:forEach>
+              <a href="javascript:void(0);">
+              <label>
+                <input type="checkbox" name="is_check_factory" value="1">
+                已验厂供应商</label>
+              </a> <a href="javascript:void(0);">
+              <label>
+                <input type="checkbox" name="is_allow" value="1">
+                已许可供应商</label>
+              </a> </dd>
+          </dl>
+          <dl>
+            <dt>资质证书：</dt>
+            <dd class="checkbox">
+            <c:forEach items="${qualityCertificas }" var="item" varStatus="status">
+            <a href="javascript:void(0);">
+              <label>
+                <input type="checkbox" name="quality_certifica" value="${item.value }">
+                ${item.name }</label>
+              </a> 
+              </c:forEach>
+              </dd>
+          </dl>
+          <dl>
+            <dt>企业性质：</dt>
+            <dd class="checkbox">
+            <c:forEach items="${companyTypes }" var="item" varStatus="status">
+            <a href="javascript:void(0);">
+              <label>
+                <input type="checkbox" name="company_type" value="${item.value }">
+                ${item.name }</label>
+              </a> 
+              </c:forEach>
+              </dd>
+          </dl>
+          <dl style="text-align: center;">
+              <span><a class="btn btn-success btn-sm" href="javascript:confirmCondition();" style="background-color: #f0ad4e;border-color: #eea236;"><jdf:message code="label_product_confirm" /></a></span>
+          </dl>
+          
+        </div>
+      </div>
+      </form>
+      <div class="listCont">
+        <c:forEach items="${page.data.products }" var="item" varStatus="varStatus">
+	        <div class="list-node">
+	          <div class="pro-img"><a href="${dynamicDomain }/home/product/detail/${item.id}" target="_blank"><img src="${dynamicDomain }/${item.mainPicture}" /></a></div>
+	          <div class="pro-text">
+	            <h3><a href="${dynamicDomain }/home/product/detail/${item.id}" target="_blank">${item.name}</a></h3>
+	            <div class="info"><i><jdf:message code="label_product_price" />：</i><span>${item.minPrice }</span></div>
+	            <div class="info"><i><jdf:message code="label_product_MOQ" />：</i>${item.minBuyNumber }</div>
+	            <p title="${item.subName}">${item.subName}</p>
+	          </div>
+	          <div class="pro-extra">
+	            <h4><a href="${dynamicDomain }/home/company/index/${item.supplierId}" target="_blank">${item.companyName }</a></h4>
+	            <div class="icon">
+		            <span class="icon-jp1"><jdf:columnValue dictionaryId="1402" value="${item.memberLevel}" /></span>
+		            <c:if test="${item.isCheckFactory==1 }">
+		                <span class="icon-yz1"><jdf:message code="label_product_factory" /></span>
+		            </c:if>
+		        </div>
+	            <div class="iso">${item.companyCertifica }</div>
+	            <div><a class="btn btn-warning btn-sm" href="#" data-toggle="modal" data-target="#singleInquiryModal" onclick="singleInquiry(${item.id});"><jdf:message code="label_product_contact" /></a></div>
+	          </div>
+	        </div>
+        </c:forEach>
+      </div>
+      <div class="text-center" style="border-top:1px solid #ddd;">
+        <div class="pagination" id="pagination">
+             <div class="page_numbers"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 单个产品询盘弹窗begin -->
+<div class="modal fade" id="singleInquiryModal" tabindex="-1" role="dialog" aria-labelledby="singleInquiryModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="singleInquiryModalLabel"><jdf:message code="btn_inquiry"/></h4>
+      </div>
+      <div class="modal-body">
+      <jdf:form bean="entity" scope="request">
+        <form method="post" action="${dynamicDomain}/member/releaseInquiry" class="form-horizontal" id="singleInquiry" >
+		<input type="hidden" name="productId" id="productId">
+		<input type="hidden" name="categoryId" id="categoryId" value="0">
+		<input type="hidden" name="secondCategoryId" id="secondCategoryId" value="0">
+          <div class="form-group">
+            <label class="col-lg-2 control-label"></span><jdf:message code="label_inquiry_fromCompany"/></label>
+            <div class="col-lg-8">
+              <input type="text" class="form-control" id="fromCompanyName" name="fromCompanyName">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-lg-2 control-label"><span class="text-danger"> </span><jdf:message code="label_inquiry_product_name"/></label>
+            <div class="col-lg-8">
+              <input type="text" class="form-control" id="productName"  name="productName" readonly="readonly">
+            </div>
+          </div>
+         <div class="form-group">
+            <label class="col-lg-2 control-label"><span class="text-danger"> </span></span><jdf:message code="label_inquiry_description"/></label>
+            <div class="col-lg-8">
+              <textarea class="form-control" rows="3" readonly="readonly" id="description" name="description"></textarea><br>
+            </div>
+          </div>
+         <div class="form-group">
+            <label class="col-lg-2 control-label"><span class="red">* </span> <jdf:message code="label_inquiry_quantity"/></label>
+            <div class="col-lg-4">
+              <input type="text" class="required form-control" name="quantity" id="quantity">
+            </div>
+            <div class="col-lg-2">
+              <select class="required form-control" name="unit" id="unit">
+					<jdf:select dictionaryId="1503" valid="true" />
+              </select>
+            </div>
+         </div>
+        </form>
+        </jdf:form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal"><jdf:message code="label_inquiry_cancel"/></button>
+        <button type="button" class="btn btn-primary" onclick="subform();"><jdf:message code="label_inquiry_submit"/></button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- 单个产品询盘弹窗end -->
+<script type="text/javascript">
+    function validQuery(){
+    	var word = $('input[name="queryWords"]').val();
+    	if(word.trim()==''){
+    		alert('请输入查询关键字!');
+    		return false;
+    	}
+    	return true;
+    }
+    function confirmCondition(){
+    	searchAction();
+    	if(validQuery()){
+    		$('#searchForm').submit();
+    	}
+    }
+    function searchAction(){
+    	var param = $('#conditionForm').serialize();
+        var action = $('#searchForm').attr('action');
+        $('#searchForm').attr('action',action+'?'+param);
+    }
+    $(function(){
+        <c:if test="${page.totalPages != 0}">
+        $("#pagination").twbsPagination({
+              totalPages: ${page.totalPages},
+              visiblePages: 5,
+              startPage:${page.current},
+              onPageClick: function (event, page) {
+                $('#page-content').text('Page ' + page);
+                window.location.href = "${dynamicDomain}/home/search?type=1&${urlParam}&ec_p="+page;
+           }
+        });
+       </c:if>
+       $('#searchButton').click(function(){
+    	   searchAction();
+    	   if(validQuery()){
+               $('#searchForm').submit();
+           }
+       });
+       //页面选中查询条件memberLevel
+       <c:if test="${memberLevel!=null}">
+          <c:forEach items="${memberLevel}" var="item" varStatus="status">
+             $('input[name="member_level"][value="${item}"]').attr("checked","checked");
+          </c:forEach>
+       </c:if>
+       //isCheckFactory
+       <c:if test="${isCheckFactory==1}">
+          $('input[name="is_check_factory"]').attr("checked","checked");
+       </c:if>
+       //isAllow
+       <c:if test="${isAllow==1}">
+          $('input[name="is_allow"]').attr("checked","checked");
+       </c:if>
+       //qualityCertifica
+       <c:if test="${qualityCertifica!=null}">
+          <c:forEach items="${qualityCertifica}" var="item" varStatus="status">
+             $('input[name="quality_certifica"][value="${item}"]').attr("checked","checked");
+          </c:forEach>
+       </c:if>
+       //companyType
+       <c:if test="${companyType!=null}">
+       <c:forEach items="${companyType}" var="item" varStatus="status">
+          $('input[name="company_type"][value="${item}"]').attr("checked","checked");
+       </c:forEach>
+    </c:if>
+    });
+    
+    function singleInquiry(productId){
+    	$("#productId").val(productId);
+    	$.ajax({
+			url: "${dynamicDomain}/member/getProductInfo?productId="+productId,
+			type : 'post',
+			dataType : 'json',
+			success :function (data) {
+			 //对请求返回的JSON格式进行分解加载
+				 $("#productName").val(data.product.nameZh);
+				 $("#description").val(data.product.descriptionZh);
+				 $("#fromCompanyName").val(data.fromCompanyName);
+			}
+		});
+    }
+    
+    function subform(){
+	   	 $('#singleInquiry').validate();
+	   	 $('#singleInquiry').submit();
+    }
+    </script>
+</body>
+</html>

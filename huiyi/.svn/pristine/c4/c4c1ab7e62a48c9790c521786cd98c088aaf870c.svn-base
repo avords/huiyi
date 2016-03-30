@@ -1,0 +1,119 @@
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ include file="../common/header.jsp"%>
+<title>推荐管理</title>
+</head>
+<body>
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<span class="glyphicon glyphicon-user"></span>
+			推荐管理
+		</div>
+		<div class="panel-body">
+			<jdf:form bean="entity" scope="request">
+				<form method="post" action="${dynamicDomain}/admin/recommend/save?ajax=1" class="form-horizontal" id="editForm">
+					<div class="col-sm-12 alert alert-info" id="messageBox">
+						${message}
+					</div>
+		<!-- 			<input type="hidden" name="objectId"> -->
+					<div class="row">
+						<div class="col-sm-6 col-md-6">
+							<div class="form-group">
+								<label for="type" class="col-sm-2 control-label">类型:</label>
+									<div class="col-sm-10">
+										<select class="form-control" id="test" name="type" onchange="check()">
+											<option  value="">请选择</option>
+												<jdf:select dictionaryId="1114" />
+										</select>
+									</div>
+							</div>
+						</div>
+					</div>
+					<!-- 企业 -->
+					<div class="row" id="company">
+	 					<div class="col-sm-6 col-md-6">
+							<div class="form-group">
+								<label for="itemId" class="col-sm-2 control-label">名称:</label>
+									<div id="optionD" class="col-sm-10">
+										 <select name="itemId"  style="width:325px">
+				                            <option value="">请选择</option>
+				                                <jdf:selectCollection items="companies" optionValue="objectId" optionText="nameZh" />
+					                     </select>
+								   </div>
+							</div>
+						</div> 
+					</div>
+					
+					<div class="row">
+						<div class="col-sm-6 col-md-6">
+							<div class="form-group">
+								<label for="priority" class="col-sm-2 control-label">顺序:</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control" id="priority" name="priority">
+								</div>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="row">
+						<div class="col-sm-6 col-md-6">
+							<div class="pull-right">
+								<c:if test="${ empty message}">
+								<button type="submit" class="btn btn-primary" id="submitBtn">
+									<span class="glyphicon glyphicon-ok"></span><jdf:message code="common.button.save"/>
+								</button>
+								</c:if>
+								<c:if test="${not empty message}">
+									<button type="button" class="btn btn-primary" onclick="toUrl('${dynamicDomain}/admin/recommend/create?ajax=1')">
+										<jdf:message code="common.button.goonAdd" />
+										<i class="icon-double-angle-right icon-white"></i>
+									</button>
+								</c:if>
+							</div>
+						</div>
+					</div>
+					
+				</form>
+			</jdf:form>
+			
+			<!-- 企业 1-->
+			<div id="productD" hidden="true">
+				<select name="itemId"  style="width:325px">
+				         <option value="">请选择</option>
+				           <jdf:selectCollection items="products" optionValue="objectId" optionText="nameZh" />
+				 </select>
+			</div>
+			<!-- 产品2 -->
+			<div id="companiesD" hidden="true">
+				<select name="itemId" style="width:325px">
+				         <option value="">请选择</option>
+				         <jdf:selectCollection items="companies" optionValue="objectId" optionText="nameZh" />
+				</select>
+			</div>
+					
+		</div>
+	</div> 
+	<jdf:bootstrapDomainValidate domain="Recommend" />
+<script type="text/javascript">
+	function check()
+		{
+		  var r=document.getElementById("test").value;
+		  var op=document.getElementById("optionD");
+		  //移除子节点
+		  removeChil(op);
+		  if(r==1){
+			  op.innerHTML=document.getElementById("companiesD").innerHTML;
+			 
+		  }else{
+			  op.innerHTML=document.getElementById("productD").innerHTML;
+		  }
+		 }
+	function removeChil(div){
+		 while(div.hasChildNodes()) //当div下还存在子节点时 循环继续
+		    {
+		        div.removeChild(div.firstChild);
+		    }
+	}
+	
+</script>	
+</body>

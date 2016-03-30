@@ -1,0 +1,116 @@
+package com.mvc.business.service;
+
+import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.mvc.HYConstants;
+import com.mvc.business.model.Inquiry;
+import com.mvc.business.model.Quotation;
+import com.mvc.framework.service.BaseService;
+import com.mvc.member.model.Company;
+import com.mvc.member.model.Member;
+import com.mvc.member.model.PaymentTerm;
+import com.mvc.member.service.CompanyManager;
+import com.mvc.member.service.PaymentTermManager;
+import com.mvc.search.util.I18NUtils;
+import com.mvc.service.model.ServiceApply;
+
+@Service
+public class QuotationManager extends BaseService<Quotation, Serializable>{
+	@Autowired
+	InquiryManager inquiryManager;
+	@Autowired
+	InquiryItemManager inquiryItemManager;
+	@Autowired
+	PaymentTermManager paymentTermManager;
+	@Autowired
+	private CompanyManager companyManager;
+	//报价个数
+    public List<Quotation> getByInquireId(Long inquiryId) {
+    	return searchBySql("select A from " + Quotation.class.getName() +" A where A.inquiryId = ?", inquiryId);
+	}
+    
+    public Quotation getQuotation(Long inquiryId,Long fromCompanyId){
+    	return searchObjectBySql("select A from " + Quotation.class.getName() +" A where A.inquiryId = ? and A.fromCompanyId = ?", inquiryId,fromCompanyId);
+    }
+    
+    public String saveOffer(HttpServletRequest request ) throws ParseException{
+    	Member member = (Member) request.getSession().getAttribute(HYConstants.SESSION_MEMBER);
+    	String message = "";
+    	if(member.getCompanyId()==null){
+			 message = I18NUtils.transformName("请先维护企业信息", "Please first maintain enterprise information", request.getLocale());;
+			 return message;
+		}else{
+			Company company = companyManager.getByObjectId(member.getCompanyId());
+			if(company.getStatus()!=Company.COMPANY_STATUS_PASSED){
+				message = I18NUtils.transformName("企业不在审核通过状态", "Enterprises are not audited by the state", request.getLocale());;
+				return message;
+			}else{
+				Quotation entity = new Quotation();
+				entity.setFromCompanyId(member.getCompanyId());
+				String inquiryIdStr = request.getParameter("inquiryId");
+				Inquiry inquiry = inquiryManager.getByObjectId(Long.parseLong(inquiryIdStr));
+				entity.setToCompanyId(inquiry.getFromCompanyId());
+				String sendDate = request.getParameter("sendDate");
+				if(StringUtils.isNotBlank(sendDate)){
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");                
+					Date date = sdf.parse(sendDate);   
+					entity.setSendDate(date);
+				}else{
+					entity.setSendDate(new Date());
+				}
+				entity.setStatus(HYConstants.STATUS_NO);
+				entity.setProductName(request.getParameter("productName"));
+				entity.setToCompanyName(request.getParameter("toCompanyName"));
+				entity.setInquiryId(Long.parseLong(inquiryIdStr));
+				entity.setQuantity(Double.parseDouble(request.getParameter("quantity")));
+				entity.setUnit(Integer.parseInt(request.getParameter("unit")));
+				entity.setPrice(Double.parseDouble(request.getParameter("price")));
+				entity.setPriceUnit(Integer.parseInt(request.getParameter("priceUnit")));
+				entity.setFromCompanyName(request.getParameter("fromCompanyName"));
+				entity.setToCompanyName(request.getParameter("toCompanyName"));
+				String quotationIdStr = request.getParameter("quotationId");
+				if(StringUtils.isNotBlank(quotationIdStr)){
+					entity.setObjectId(Long.parseLong(quotationIdStr));
+					entity.setStatus(HYConstants.STATUS_YES);
+				}
+				save(entity);
+				String paymentTerms[]=request.getParameterValues("paymentTerms");
+				paymentTermManager.deleteByQuotationId(entity.getObjectId());
+				if (paymentTerms!=null) {
+					for(int i=0;i<paymentTerms.length;i++){
+						PaymentTerm paymentTerm = new PaymentTerm();
+						paymentTerm.setQuotationId(entity.getObjectId());
+						paymentTerm.setPaymentTermId(Integer.parseInt(paymentTerms[i]));
+						paymentTermManager.save(paymentTerm);
+					}
+				}
+				inquiryItemManager.updateOfferStatus(HYConstants.HAVE_OFFER,entity.getFromCompanyId(),entity.getInquiryId());
+				inquiryItemManager.update(inquiry.getObjectId());
+				return "success"; 
+			}
+		}
+	}
+    
+    /**
+   	 * 会员中心显示的报价
+   	 */
+   	@SuppressWarnings("unchecked")
+   	public List<Quotation> getQuotations(int size,Long companyId) {
+   		String hql = "select A from " + Quotation.class.getName() +" A where A.toCompanyId =" +companyId+ " AND A.status=0 order by A.sendDate desc";
+   		Query query = getSession().createQuery(hql);
+           query.setFirstResult(0);
+           query.setMaxResults(size);
+           return query.list();
+   	}
+}

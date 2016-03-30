@@ -1,0 +1,36 @@
+package com.mvc.member.service;
+
+import java.io.Serializable;
+
+import org.hibernate.Query;
+import org.springframework.stereotype.Service;
+import com.mvc.framework.service.BaseService;
+import com.mvc.member.model.Favorites;
+import com.mvc.member.model.History;
+
+@Service
+public class FavoritesManager extends BaseService<Favorites, Serializable>{
+	public void executeAudit(Long objectId,int isDelete) {
+        String hql = "update "+History.class.getName()+" set isDelete=? where entityId=?";
+        Query query = getSession().createQuery(hql);
+        query.setParameter(0, isDelete);      
+        query.setParameter(1, objectId); 
+        query.executeUpdate();
+    }
+	
+	public void executeAudit2(Long objectId,int isDelete) {
+        String hql = "update "+History.class.getName()+" set isDelete=? where entityId=?";
+        Query query = getSession().createQuery(hql);
+        query.setParameter(0, isDelete);      
+        query.setParameter(1, objectId); 
+        query.executeUpdate();
+    }
+	
+	public boolean checkEntityId(Long entityId) {
+		if (searchByWhere("entityId=?", entityId)!= null) {
+			return false;
+		}
+		return true;
+	}
+	
+}

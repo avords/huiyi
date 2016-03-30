@@ -1,0 +1,68 @@
+<dataConfig>
+    <dataSource name="dataSource" driver="com.mysql.jdbc.Driver" url="jdbc:mysql://test.neefull.com:3306/huiyi" user="huiyi" password="huiyi"/>
+    <document>
+        <entity name="product" pk="OBJECT_ID" dataSource="dataSource" transformer="HTMLStripTransformer"
+        query="select OBJECT_ID,NAME_ZH,NAME_EN,SUB_NAME_ZH,SUB_NAME_EN,MAIN_PICTURE,DESCRIPTION_ZH,DESCRIPTION_EN,CATEGORY_ID,SUPPLIER_ID,UPDATED_ON,SUPPLIER_ID,MIN_BUY_NUMBER,
+        (select tc.name_zh from t_country tc where tc.object_id=p.country_id)COUNTRY_NAME_ZH,
+        (select tc.name_en from t_country tc where tc.object_id=p.country_id)COUNTRY_NAME_EN,
+        (select min(sell_price_zh) from p_sku sku where sku.product_id=p.object_id) min_price_zh,
+        (select GROUP_CONCAT(tcc.content) from t_company_certificate tcc where tcc.COMPANY_ID=p.SUPPLIER_ID group by tcc.COMPANY_ID) COMPANY_CERTIFICA,
+        (select min(sell_price_en) from p_sku sku where sku.product_id=p.object_id) min_price_en from p_product p where IS_IN_SALE=1" 
+        deltaQuery="select OBJECT_ID  from p_product where UPDATED_ON > str_to_date('${dataimporter.last_index_time}','%Y-%m-%d %H:%i:%s')"  
+        deletedPkQuery="select OBJECT_ID from p_product where IS_IN_SALE=0"
+        deltaImportQuery="select OBJECT_ID,NAME_ZH,NAME_EN,SUB_NAME_ZH,SUB_NAME_EN,MAIN_PICTURE,DESCRIPTION_ZH,DESCRIPTION_EN,CATEGORY_ID,SUPPLIER_ID,UPDATED_ON,SUPPLIER_ID,MIN_BUY_NUMBER,
+        (select tc.name_zh from t_country tc where tc.object_id=p.country_id)COUNTRY_NAME_ZH,
+        (select tc.name_en from t_country tc where tc.object_id=p.country_id)COUNTRY_NAME_EN,
+        (select min(sell_price_zh) from p_sku sku where sku.product_id=p.object_id) min_price_zh,
+        (select GROUP_CONCAT(tcc.content) from t_company_certificate tcc where tcc.COMPANY_ID=p.SUPPLIER_ID group by tcc.COMPANY_ID) COMPANY_CERTIFICA,
+        (select min(sell_price_en) from p_sku sku where sku.product_id=p.object_id) min_price_en from p_product p where OBJECT_ID='${dataimporter.delta.OBJECT_ID}'">
+        
+            <field column="OBJECT_ID" name="id"/>
+            <field column="NAME_ZH" name="name_zh"/>
+            <field column="NAME_EN" name="name_en"/>
+            <field column="SUB_NAME_ZH" name="sub_name_zh"/>
+            <field column="SUB_NAME_EN" name="sub_name_en"/>
+            <field column="CATEGORY_ID" name="category_id"/>
+            <field column="MAIN_PICTURE" name="main_picture"/>
+            <field column="DESCRIPTION_ZH" name="description_zh" stripHTML="true"/>
+            <field column="DESCRIPTION_EN" name="description_en" stripHTML="true"/>
+            <field column="COUNTRY_NAME_ZH" name="country_name_zh"/>
+            <field column="COUNTRY_NAME_En" name="country_name_en"/>
+            <field column="UPDATED_ON" name="updated_on"/>
+            <field column="SUPPLIER_ID" name="supplier_id"/>
+            <field column="COMPANY_CERTIFICA" name="company_certifica"/>
+            <field column="MIN_BUY_NUMBER" name="min_buy_number"/>
+            <entity name="skuAttribute" 
+            query="select concat(attr.name_zh,'_',val.NAME_ZH ) NAME_ZH,concat(attr.name_en,'_',val.NAME_EN) NAME_EN from p_sku_attribute_attached val left join p_attribute attr on(val.attribute_id=attr.object_id) where val.PRODUCT_ID='${product.OBJECT_ID}'">
+                <field column="NAME_ZH" name="sku_attribute_name_zh"/>
+                <field column="NAME_EN" name="sku_attribute_name_en"/>
+            </entity >
+            <entity name="productAttribute" 
+            query="select concat(pa.name_zh,'_',case ppa.attribute_val_id when null then ppa.value else pav.name_zh end) NAME_ZH,concat(pa.name_en,'_',case ppa.attribute_val_id when null then ppa.value else pav.name_en end) NAME_EN from p_product_attribute ppa join p_attribute pa on(ppa.attribute_id=pa.object_id) join p_attribute_val pav on(ppa.attribute_val_id=pav.object_id) where ppa.PRODUCT_ID='${product.OBJECT_ID}'">
+                <field column="NAME_ZH" name="product_attribute_name_zh"/>
+                <field column="NAME_EN" name="product_attribute_name_en"/>
+            </entity >
+            <entity name="category" 
+            query="select pc1.name_zh CATEGORY_NAME1_ZH,pc1.name_en CATEGORY_NAME1_EN,pc2.name_zh CATEGORY_NAME2_ZH,pc2.name_en CATEGORY_NAME2_EN from p_category pc2 left join p_category pc1 on(pc2.parent_id=pc1.object_id) where pc2.OBJECT_ID='${product.CATEGORY_ID}'">
+                <field column="CATEGORY_NAME1_ZH" name="category_name1_zh"/>
+                <field column="CATEGORY_NAME1_EN" name="category_name1_en"/>
+                <field column="CATEGORY_NAME2_ZH" name="category_name2_zh"/>
+                <field column="CATEGORY_NAME2_EN" name="category_name2_en"/>
+            </entity >
+            <entity name="company" 
+            query="select tc.OBJECT_ID,tc.name_zh COMPANY_NAME_ZH,tc.name_en COMPANY_NAME_EN,tc.level MEMBER_LEVEL,tc.is_check IS_CHECK_FACTORY,tc.is_allow IS_ALLOW from t_company tc where tc.OBJECT_ID='${product.SUPPLIER_ID}'">
+                <field column="COMPANY_NAME_ZH" name="company_name_zh"/>
+                <field column="COMPANY_NAME_EN" name="company_name_en"/>
+                <field column="MEMBER_LEVEL" name="member_level"/>
+                <field column="IS_CHECK_FACTORY" name="is_check_factory"/>
+                <field column="IS_ALLOW" name="is_allow"/>
+                <entity name="businessType" query="select tb.type COMPANY_TYPE from t_business_type tb where tb.COMPANY_ID='${company.OBJECT_ID}'">
+                     <field column="COMPANY_TYPE" name="company_type"/>
+                </entity>
+                <entity name="companyCertificate" query="select tcc.type TYPE from t_company_certificate tcc where tcc.COMPANY_ID='${company.OBJECT_ID}'">
+                     <field column="TYPE" name="quality_certifica"/>
+                </entity>
+            </entity >
+        </entity>
+    </document>
+</dataConfig>

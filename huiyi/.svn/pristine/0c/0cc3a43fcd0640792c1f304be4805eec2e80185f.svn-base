@@ -1,0 +1,217 @@
+ <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ include file="../common/taglibs.jsp"%>
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="${dynamicDomain}/static/assets/css/member.css">
+<jdf:themeFile file="jquery.SuperSlide.2.1.1.js" />
+<jdf:themeFile file="jquery.twbsPagination.js" />
+<jdf:themeFile file="My97DatePicker/WdatePicker.js" />
+<jdf:themeFile file="css/colorbox.css" />
+<jdf:themeFile file="jquery.colorbox.min.js" />
+<jdf:themeFile file="ckeditor/ckeditor.js" />
+<jdf:themeFile file="ckeditor/config.js" />
+<jdf:themeFile file="ajaxfileupload.js" />
+<jdf:themeFile file="kindeditor/kindeditor.js" />
+<jdf:themeFile file="kindeditor/lang/zh_CN.js" />
+<title><jdf:message code="menu_member_mytracks"/></title>
+</head>
+<body>
+<div class="container member">
+    <%@ include file="common/member_buyer_left.jsp"%>
+    <div class="merberBody">
+      <div class="tag-box tag-box-v3 form-page">
+        <div class="headline">
+          <h3><jdf:message code="menu_member_mytracks"/></h3>
+        </div>
+        <div class="row margin-bottom-40">
+          <div class="col-md-8">
+          <form  action="${dynamicDomain}/member/myTracks" method="post" id="searchForm">
+            <div class="form-group">
+               <label for="inputEmail1" class="col-md-3 control-label"><jdf:message code="label_mytracks_time"/>：</label>
+               <input type="hidden" name="type" value="0">
+               <div class="col-md-9">
+               	<input value="<fmt:formatDate value="${startDate }" pattern="yyyy-MM-dd HH:mm:ss"/>" type="text" style="width:170px;height:33px;" id="startDate" name="startDate" size="14" class="Wdate" onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',maxDate:'#F{$dp.$D(\'endDate\')}',readOnly:true})">~ 
+                   <input value="<fmt:formatDate value="${endDate }" pattern="yyyy-MM-dd HH:mm:ss"/>" type="text" style="width:170px;height:33px;" id="endDate" name="endDate" size="14" class="Wdate" onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'#F{$dp.$D(\'startDate\')}',readOnly:true})">
+               </div>
+             </div>
+		      <div class="col-md-12 margin-bottom-6" style="margin-left:90%">
+		            <button class="btn-u btn-u-blue btn-u-sm" type="submit" style="width:80px;"><jdf:message code="common.button.query" /></button>
+		     </div>
+            </form>
+          </div>
+        </div>
+        <div class="tab-v1 margin-bottom-40">
+          <ul class="nav nav-tabs">
+            <li class="active" id="keys1"><a href="${dynamicDomain}/member/myTracks?type=0"><jdf:message code="label_mytracks_product"/></a></li>
+            <li class="" id="keys2"><a href="${dynamicDomain}/member/myTracks?type=1"><jdf:message code="label_supplier"/></a></li>
+          </ul>
+          <div class="tab-content" style="padding:20px 0;">
+		  
+            <div class="tab-pane fade active in history-pro" id="button-1">
+              <div class="hd"> <span>
+                <input type="checkbox" name="allChecked" id="allChecked" onclick="DoCheck()"/>
+                </span>
+                	<span><a href="javascript:void(0);" onclick="addAllToFavorite()" class="color-blue"><i class="fa fa-star"></i><jdf:message code="label_mytracks_add_to_favorite"/></a></span>
+                 	<span><a href="javascript:void(0);" onclick="deleteAllFavorites()"class="color-red"><i class="fa fa-trash-o"></i><jdf:message code="label_mytracks_delete"/></a></span>
+            </div>
+              <c:forEach items="${pageSearch.list}" var="asl" >
+			  <div class="bd">
+                <div class="list clearfix">
+                  <div class="checkbox">
+                    <input type="checkbox" name="choose" id="choose_${asl.entity.objectId }" value="${asl.entity.objectId}" />
+                  </div>
+                  <div class="img"><a href="${dynamicDomain}/home/product/detail/${asl.entity.objectId}"><img src="${dynamicDomain}${asl.entity.mainPicture}"></a></div>
+                  <div class="text">
+                    <h3><a href="${dynamicDomain}/member/productDetail/${asl.entity.objectId}">${asl.entity.nameZh}</a></h3>
+                       <div id="txt1122">${asl.entity.descriptionZh}</div>
+                    <div class="other">
+                      <h4><jdf:message code="label_productdetail_products"/><i class="fa fa-sort-desc"></i></h4>
+                      <ul>
+                       <c:forEach items="${asl.similarProduct }" var="similProduct">
+                        <li><a href="${dynamicDomain}/home/product/detail/${similProduct.objectId} "><img src="${dynamicDomain}${similProduct.mainPicture}"></a>
+                          <p><a href="#">${similProduct.nameZh}</a></p>
+                        </li>
+                       </c:forEach>
+                      </ul>
+                    </div>
+                  </div>
+                  <div class="del">
+                    <p><a href="javascript:void(0);" onclick="addFavorites(${asl.entity.objectId})" class="color-blue"><i class="fa fa-star"></i><jdf:message code="label_mytracks_add_to_favorite"/></a></p>
+                    <p><a  href="javascript:void(0);" onclick="deleteFavorites(${asl.entity.objectId})"  class="color-red"><i class="fa fa-trash-o"></i><jdf:message code="label_mytracks_delete"/></a></p>
+                  </div>
+                </div>
+              </div>
+              </c:forEach>
+              <!-- 分页 -->
+	         <div class="col-md-12 text-center">
+	          <div class="Pagination" id="pagination" >
+				  <div class="page_numbers"></div>
+			  </div>
+          	</div>
+         	<!--/ 分页 --> 
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+ <script type="text/javascript" src="${dynamicDomain}/static/assets/js/jquery.SuperSlide.2.1.1.js"></script>
+ <script type="text/javascript">
+ $(function(){
+		$('#myTracks').addClass("active");
+		$(".colorbox-large").colorbox({ width: "80%", height:"80%", close: "关闭", overlayClose: false});
+		
+		if('${pageSearch.totalPage != 0}'){
+	        $("#pagination").twbsPagination({
+	              totalPages: ${pageSearch.totalPage},
+	              visiblePages:5,
+	              startPage: ${pageSearch.currentPage},
+	              onPageClick: function (event, page) {
+	                $('#page-content').text('Page ' + page);
+	                window.location.href = "${dynamicDomain}/member/myTracks?type=0&ec_p="+page;
+	           }
+	        });
+		}
+	});
+ function addFavorites(objectId){
+		$.ajax({
+	        url:'${dynamicDomain}/favorites/addFavorites/'+objectId+'?type='+0,
+	        type : 'post',
+	        dataType: 'json', 
+	        success:function(msg) {
+	        	var temp=msg.message; 
+	        	window.location.reload();
+				alert(temp);
+	        },
+	    });
+	}
+ 
+ function deleteFavorites(objectId){
+	 if (confirm("<jdf:message code="label_mytracks_delete_something"/>")) { 
+		$.ajax({
+	        url:'${dynamicDomain}/favorites/deleteFavorites/'+objectId,
+	        type : 'post',
+	        dataType: 'json', 
+	        success:function(msg) {
+	        	var temp=msg.message;
+	        	window.location.reload();
+	        },
+	    });
+	}else{
+		 window.event.returnValue = false; 
+	 } 
+ }
+ 
+	 function DoCheck()
+	 {
+	 	var ch=document.getElementsByName("choose");
+	 	if(document.getElementsByName("allChecked")[0].checked==true)
+	 	{
+	 		for(var i=0;i<ch.length;i++)
+	 		{
+	 			ch[i].checked=true;
+	 		}
+	 	}else{
+	 			for(var i=0;i<ch.length;i++)
+	 			{
+	 				ch[i].checked=false;
+	 			}
+	 		}
+	 }
+	 
+	 function deleteAllFavorites(){
+		 if (confirm("<jdf:message code="label_mytracks_delete_something"/>")) { 
+			 $.ajax({
+			        url:'${dynamicDomain}/favorites/deleteAllFavorites',
+			        type : 'post',
+			        dataType: 'json', 
+			        success:function(msg) {
+			        	var temp=msg.message;
+			        	window.location.reload();
+			        },
+			    });
+		}  
+		 else{
+			 window.event.returnValue = false; 
+			 window.location.reload();
+		 } 
+	 } 
+	 
+	 function addAllToFavorite(){
+		 var allChecked=document.getElementsByName("choose");
+		 var result="";
+	        for(var i=0;i<allChecked.length;i++){
+	            if(allChecked[i].checked&&result!=""){
+	                result+=","+allChecked[i].value;
+	            }else if(allChecked[i].checked&&result==""){
+	            	result+=allChecked[i].value;
+	            	}
+	            }
+	      var objectIdStr=result;
+	      if(objectIdStr==""){
+	    	  alert("<jdf:message code="label_mytracks_alert"/>");
+	      }
+			$.ajax({
+		        url:'${dynamicDomain}/favorites/addAllToFavorites?objectIdStr='+objectIdStr,
+		        type : 'post',
+		        dataType: 'json', 
+		        success:function(msg) {
+		        	var temp=msg.message; 
+		        	window.location.reload();
+					alert(temp);
+		        },
+		    });
+		}
+	 
+	 window.onload = function(){
+         var text = document.getElementById('txt1122'),
+         str = text.innerHTML,
+         textLeng = 64;
+         if(str.length > textLeng ){
+               text .innerHTML = str.substring(0,textLeng )+"......";
+         } 
+}	
+</script>
+</body>
+</html>

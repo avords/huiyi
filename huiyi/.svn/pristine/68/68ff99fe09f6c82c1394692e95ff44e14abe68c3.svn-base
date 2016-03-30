@@ -1,0 +1,142 @@
+package com.mvc.util;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Locale;
+
+import javax.servlet.http.HttpServletRequest;
+
+import com.mvc.framework.util.LocaleUtils;
+
+public final class I18NUtils {
+
+	private I18NUtils() {
+	}
+
+	public static String transform(Object t, String name, String language) throws RuntimeException {
+		if (t != null) {
+			if (language.equals("zh")) {
+				String fieldName = name + "Zh";
+				Object value = invokeGet(fieldName, t);
+				return value.toString();
+			} else if (language.equals("en")) {
+				String fieldName = name + "En";
+				Object value = invokeGet(fieldName, t);
+				return value.toString();
+			}
+		}
+		return "";
+	}
+
+	/**
+	 * 根据字段前缀进行语言转换
+	 * 
+	 * @param t
+	 * @param name
+	 * @param request
+	 * @return
+	 * @throws RuntimeException
+	 */
+	public static String transform(Object t, String name, HttpServletRequest request) throws RuntimeException {
+		if (t != null) {
+			String language = LocaleUtils.getLocale(request).getLanguage();
+			if (language.equals("zh")) {
+				String fieldName = name + "Zh";
+				Object value = invokeGet(fieldName, t);
+				return value.toString();
+			} else if (language.equals("en")) {
+				String fieldName = name + "En";
+				Object value = invokeGet(fieldName, t);
+				return value.toString();
+			}
+		}
+		return "";
+	}
+
+	/**
+	 * 转换指定对象的所有国际化字段到中文字段
+	 * 
+	 * @param t
+	 * @param request
+	 * @throws RuntimeException
+	 */
+	public static void transform(Object t, HttpServletRequest request) throws RuntimeException {
+		if (t != null) {
+			String language = LocaleUtils.getLocale(request).getLanguage();
+			if (language.equals("en")) {
+				Field[] fields = t.getClass().getDeclaredFields();
+				for (Field f : fields) {
+					if (f.getName().endsWith("Zh")) {
+						Object value = invokeGet(f.getName().replace("Zh", "En"), t);
+						invokeSet(f.getName(), t, value);
+					}
+				}
+			}
+		}
+	}
+
+	public static void transform(Object t, String language) throws RuntimeException {
+		if (t != null) {
+			if (language.equals("en")) {
+				Field[] fields = t.getClass().getDeclaredFields();
+				for (Field f : fields) {
+					if (f.getName().endsWith("Zh")) {
+						Object value = invokeGet(f.getName().replace("Zh", "En"), t);
+						invokeSet(f.getName(), t, value);
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * 转换集合中所有对象的所有国际化字段到中文字段
+	 * 
+	 * @param ts
+	 * @param request
+	 * @throws RuntimeException
+	 */
+	public static void transform(List ts, HttpServletRequest request) throws RuntimeException {
+		Locale locale = LocaleUtils.getLocale(request);
+		for (Object t : ts) {
+			transform(t, locale.getLanguage());
+		}
+	}
+
+	private static Object invokeGet(String fieldName, Object t) throws RuntimeException {
+		Class cl = t.getClass();
+		String methodName = "get" + captureName(fieldName);
+		Object result = null;
+		try {
+			Method method = cl.getDeclaredMethod(methodName, null);
+			if (method != null) {
+				result = method.invoke(t, null);
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		return result;
+	}
+
+	private static void invokeSet(String fieldName, Object t, Object value) throws RuntimeException {
+		if (value != null) {
+			Class cl = t.getClass();
+			String methodName = "set" + captureName(fieldName);
+			try {
+				Method method = cl.getDeclaredMethod(methodName, value.getClass());
+				if (method != null) {
+					method.invoke(t, value);
+				}
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		}
+	}
+
+	private static String captureName(String name) {
+		char[] cs = name.toCharArray();
+		cs[0] -= 32;
+		return String.valueOf(cs);
+	}
+}
